@@ -2,6 +2,8 @@
 tags: scroll documentation
 ---
 
+# MPT Circuit
+
 code: https://github.com/scroll-tech/mpt-circuit `v0.4` branch.
 
 [zkTrie spec]: https://github.com/scroll-tech/zktrie/blob/main/docs/zktrie.md

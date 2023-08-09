@@ -2,7 +2,10 @@
 tags: scroll documentation
 ---
 
-[pi_circuit_layout]: https://docs.google.com/spreadsheets/d/1-ZOqjF3lzCTqhcxP-yp8iMx4wcwOl_tJ6VnAAT0v7as/edit?usp=sharing
+# Public Input Circuit
+
+code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/pi_circuit.rs `develop` branch
+
 
 ## Public Data
 

@@ -2,9 +2,13 @@
 tags: scroll documentation
 ---
 
+# State Circuit
+
+code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/state_circuit.rs `develop` branch.
+
 ### EVM's read-write operations and the `rw_table`
 
-During execution, all of EVM's read-write operations are recorded in `rw_table`, with an order sorted by a counter variable `rw_counter`. Each row of `rw_table`, i.e. `RwRow` contains the following items as table columns:
+During execution, all of the EVM's read-write operations are recorded in `rw_table`, with an order sorted by a counter variable `rw_counter`. Each row of `rw_table`, a.k.a. `RwRow`, contains the following items as table columns:
 
 - `RwRow`
    - `rw_counter`
@@ -19,7 +23,7 @@ During execution, all of EVM's read-write operations are recorded in `rw_table`,
    - `aux1`
    - `aux2`
 
-Since there are different types of EVM's read-write operations, the above `RwRow` items may carry different types of information. Types of rw operations include:
+Since there are different types of EVM read-write operations, the above `RwRow` items may carry different types of information. Types of rw operations include:
 - Start
 - TxAccessListAccount 
 - TxAccessListAccountStorage
@@ -54,13 +58,13 @@ The actual layout of the `rw_table` consists of the above types of rows listed w
 
 ### The Purpose of the State Circuit 
 
-State circuit aims to prove that the `rw_table` is formed correctly. This results in many miscellaneous constraints. They can be mainly classified into the following categories:
+State Circuit aims to prove that the `rw_table` is formed correctly. This results in many miscellaneous constraints. They can be mainly classified into the following categories:
 
 - General constraints. 
-    - Example: some of the items such as `is_write` shall be boolean, etc. .
+    - Example: some of the items such as `is_write` shall be boolean, etc.
 - The correctness of each of the above form of read-write records as classified by `tag`. 
-    - Example: constraints for `start`, `memory`, `stack`, `account_storage`, etc. .
-- Constraints enforced by sub-configurations. These sub-configurations will be discussed in the next two sections on State Circuit Layout and Architechture&Design.
+    - Example: constraints for `start`, `memory`, `stack`, `account_storage`, etc.
+- Constraints enforced by sub-configurations. These sub-configurations will be discussed in the next two sections on State Circuit Layout and Architechture & Design.
     - Example: `MpiChip` constrains  the correct decomposition of a multiple-precision-integer into limbs with each limb in u16. This is applied to `rw_counter`, `address`, `id`.
 
 

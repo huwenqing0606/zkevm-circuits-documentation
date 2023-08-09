@@ -2,6 +2,8 @@
 tags: scroll documentation
 ---
 
+# EVM Circuit
+
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/evm_circuit.rs `develop` branch.
 
 [Ethereum Virtual Machine]: https://ethereum.org/en/developers/docs/evm/
@@ -18,7 +20,9 @@ The [Ethereum Virtual Machine] (EVM) is a state machine that defines the rules o
 
 The execution trace consists of each step of execution defined by the opcode. EVM Circuit aims at constructing a constraint system corresponding to this execution trace, that can be proved by some backend zk-proof system such as Halo2. 
 
-The high-level design idea of EVM Circuit is somehow analogous to the design of EVM itself (such as [go-ethereum]). In go-ethereum, an `Intepreter` loops over all instruction opcodes along the execution trace. At each instruction, the `Intepreter` helps to check relevant context information such as gas, stack, memory etc., and then sends the opcode to a `JumpTable` from which it fetches detailed `operation` that this opcode should do. Analogously, in EVM Circuit, we build <i>execution steps</i> according to the steps in the execution trace with witnesses for both the opcode and the execution context. For each execution step, a set of constraints is imposed to check context information. For each opcode, a set of constraints is imposed to check the opcode's behavior. Within an execution trace, the same opcode should have the same constraints. So we use a selector to "turn on" all steps for the same opcode within a trace and we prove their behavior using our backend proof system. The overall proof is obtained by applying this scheme to the list of all opcodes that appear in the execution trace.
+The high-level design idea of EVM Circuit is somewhat reminiscent of the design of EVM itself (such as [go-ethereum]). In go-ethereum, an `Intepreter` loops over all instruction opcodes along the execution trace. At each instruction, the `Intepreter` helps to check relevant context information such as gas, stack, memory etc., and then sends the opcode to a `JumpTable` from which it fetches detailed `operation` that this opcode should do. 
+
+Analogously, in EVM Circuit, we build <i>execution steps</i> according to the steps in the execution trace, with witnesses for both the opcode and the execution context. For each execution step, a set of constraints is imposed to check context information. For each opcode, a set of constraints is imposed to check the opcode's behavior. Within an execution trace, the same opcode should have the same constraints. We use a selector to "turn on" all steps for the same opcode within a trace and we prove their behavior using our backend proof system. This is possible thanks to how our backend proof system (Halo2) works. The overall proof is obtained by applying this scheme to the list of all opcodes that appear in the execution trace.
 
 
 ## Architecture
@@ -115,13 +119,13 @@ The backend proof system is based on Halo2, so all constraints are implemented a
 
 #### Behavior of CellManager within columns of the same CellType
 
-When inserting a new cell into a region consisting of columns that are restricted to a specific `CellType`, say `CellType::Lookup` cells that are for one particular lookup table, `CellManager` always add it to the column with the shortest current height of inserted cells (columns that do not have inserted cells have height 0). If there are multiple cells to be inserted, we just iterate the above behavior. So this induces a "row by row" queries of cells, see figure below:
+When inserting a new cell into a region consisting of columns that are restricted to a specific `CellType`, say `CellType::Lookup` cells that are for one particular lookup table, `CellManager` always adds the new cell to the column with the shortest current height of inserted cells (columns that do not have inserted cells have height 0). If there are multiple cells to be inserted, we just iterate the above behavior. So this induces a "row by row" queries of cells, see figure below:
 
 ![CellManagerBehaviorSameCellType](https://hackmd.io/_uploads/SyQ7TP1F2.png)
 
 #### Behavior of CellManager across columns of different CellTypes
 
-When different regions with different `CellType` has inserted cells that occupy different height, `CellManager` results in the figure below:
+When different regions with different `CellType` have inserted cells that occupy different heights, `CellManager` results in the figure below:
 
 ![CellManagerBehaviorAcrossCellTypes](https://hackmd.io/_uploads/BkeNAP1th.png)
 
@@ -129,34 +133,44 @@ When different regions with different `CellType` has inserted cells that occupy 
 ### ExecutionGadget
 
 `ExecutionGadget` is a trait that will be implemented for each execution step that corresponds to an opcode. We often combine several opcodes with similar functionality into one `ExecutionGadget`. `ExecutionGadget` contains two methods: 
-- `configure`, which is to put constraints for this execution step; 
+- `configure`, which is to set constraints for this execution step; 
 - `assign_exec_step`, which is used to fill in witness values into the circuit. 
 
 
 ## Circuit Layout
 
-At each step, we enable 3 selector columns 
+At each step, we enable 3 selector columns: 
 - `q_usable`, if this step is a step that is actually used in execution;
 - `q_step_first`, if this step is the first execution step;
 - `q_step_last`, if this step is the last execution step. 
  
-Then we enable an advice column 
+Then we enable an advice column:
 
 - `q_step`,  the dynamic selector for the start of this execution step since the witnesses of each execution step may occupy variable height in the circuit layout. 
 
-A few extra columns are enabled for various purposes, including
+A few extra columns are enabled for various purposes, including:
 
-- `constants`, a fixed column, to hold constant values used for copy constraints
+- `constants`, a fixed column, hold constant values used for copy constraints
 - `num_rows_until_next_step`, an advice column, count the number of rows until next step
-- `num_rows_inv`, an advice column, for constraint that enforce `q_step:= num_rows_until_next_step == 0`
+- `num_rows_inv`, an advice column, for a constraint that enforces `q_step:= num_rows_until_next_step == 0`
 
-In alignment with `Challenge` API, we classify all above columns as in phase 1 columns.
+In alignment with the `Challenge` API of Halo2, we classify all above columns as in phase 1 columns using Halo2's phase convention.
 
-After that, a rectangular region of advice columns are arranged for the execution step specific constraints that corresponds to an `ExecutionGadget`. The width of this region is set to be a constant `STEP_WIDTH`. The step height is not fixed, so it is dynamic. This part is handled by `CellManager`. 
+After that, a rectangular region of advice columns is arranged for the execution step specific constraints that corresponds to an `ExecutionGadget`. The width of this region is set to be a constant `STEP_WIDTH`. The step height is not fixed, so it is dynamic. This part is handled by `CellManager`. 
 
-For each step, `CellManager` allocates an area of advice columns with given height and number of advice columns as width. The allocation process is in alignment with `Challenge` API. So within the area of advice column allocated, `CellManager` marks columns in consecutive regions from left to right as
+For each step, `CellManager` allocates an area of advice columns with a given height and the number of advice columns as its width. The allocation process is in alignment with `Challenge` API. So within the area allocated to advice columns, `CellManager` marks columns in consecutive regions from left to right as
 
-- `CellType::Lookup(Table)`: used for lookups. The type of lookups used inside evm-circuit are configured in `LOOKUP_CONFIG`, currently containing `Fixed` (corresponding to the fixed table), `Tx` (corresponding to the tx table), `Rw` (corresponding to the read-write table), `Bytecode` (corresponding to the bytecode table), `Block` (corresponding to the block table), `Copy` (corresponding to the copy table), `Keccak` (corresponding to the Keccak table), `Exp` (corresponding to the exp table), `Sig` (corresponding to the tx sign-verify table). For each type of lookup cells, `LOOKUP_CONFIG` sets their number of columns used inside evm circuit. We note that this number of columns inside evm-circuit for each lookup type cells is <i>not</i> the number of columns used in the corresponding lookup table. This will be explained in detail in a later section "<b>Lookup Tables</b>"; 
+- `CellType::Lookup(Table)`: used for lookups. The type of lookups used inside evm-circuit are configured in `LOOKUP_CONFIG`, currently containing 
+    - `Fixed` (corresponding to the fixed table), 
+    - `Tx` (corresponding to the tx table), 
+    - `Rw` (corresponding to the read-write table), 
+    - `Bytecode` (corresponding to the bytecode table), 
+    - `Block` (corresponding to the block table), 
+    - `Copy` (corresponding to the copy table), 
+    - `Keccak` (corresponding to the Keccak table), 
+    - `Exp` (corresponding to the exp table), 
+    - `Sig` (corresponding to the tx sign-verify table). 
+For each type of lookup cells, `LOOKUP_CONFIG` sets its number of columns used inside EVM Circuit. Note: the number of columns inside EVM Circuit for each lookup type cells is <i>not</i> the number of columns used in the corresponding lookup table. This will be explained in detail in a later section "<b>Lookup Tables</b>"; 
 - `CellType::StoragePermutationPhase2`: used for copy constraints on phase 2, and number of columns `N_PHASE2_COPY_COLUMNS`;
 - `CellType::StoragePhase2`: used for phase 2 constraints, and number of columns `N_PHASE2_COLUMNS-N_PHASE2_COPY_COLUMNS`;
 - `CellType::StoragePermutation`: used for copy constraints, and number of columns `N_COPY_COLUMNS`;
@@ -198,7 +212,7 @@ The constraints for opcode specific `ExecutionGadget` are classified according t
 
 ### Logistics
 
-During the proof of an execution step, we sometimes use lookup type arguments to verify the correctness of the evm behavior generated at execution. The rationale is that if we can find a recorded item in a lookup table that is equal to the current evm behavior for which we want to constrain, we assert the latter's correctness. 
+During the proof of an execution step, we sometimes use lookup type arguments to verify the correctness of the EVM behavior generated at execution. The rationale is that if we can find a recorded item in a lookup table that is equal to the current EVM behavior that we want to constrain, we assert the latter's correctness. 
 
 For example, when stack push/pops a stack element, we lookup the rw table (read-write table) for the correct stack read/write behavior. Another example is the bytecode table that we can lookup to verify the correctness of bytecode stored in the contract.
 
@@ -222,28 +236,28 @@ For the EVM Circuit, there are internal and external lookup tables. We summarize
 |CopyTable|is_first, src_id, src_tag, dst_id, dst_tag, src_addr, src_addr_end, dst_addr, length, rlc_acc, rw_counter, rw_inc|
 |KeccakTable|is_enabled (=1), input_rlc, input_len, output_rlc|
 |ExpTable|is_step (=1), identifier, is_last, base_limbs[0], base_limbs[1], base_limbs[2], base_limbs[3], exp_lo_hi[0], exp_lo_hi[1], exponentiation_lo_hi[0],  exponentiation_lo_hi[1]|
-|SigTable|...|
+|SigTable|msg_hash_rlc, sig_v, sig_r_rlc, sig_s_rlc, recovered_addr, is_valid|
 
 
 ### How lookups are configured in EVM Circuit's layout
 
 #### Lookup into the table
 
-We use `Lookup::input_exprs`  method to extract input expressions from evm execution trace that we want to do lookup, and we use `LookupTable::table_exprs` method to extract table expressions from a recorded lookup table. The lookup argument aims at proving the former expression lies in the latter ones. This is done by first RLC both sides of expressions using the same random challenge and then lookup the RLC expression. Here each column of a lookup table corresponds to one lookup expression, and EVM Step's lookup input expressions must correspond to the table expressions. See the following illustration:
+We use `Lookup::input_exprs`  method to extract input expressions from an EVM execution trace that we want to do lookup, and we use `LookupTable::table_exprs` method to extract table expressions from a recorded lookup table. The lookup argument aims at proving the former expression lies in the latter ones. This is done by first RLC (Random Linear Combine) both sides of expressions using the same random challenge and then lookup the RLC expression. Here each column of a lookup table corresponds to one lookup expression, and EVM Step's lookup input expressions must correspond to the table expressions. See the following illustration:
 
 ![evm-circuit-lookup](https://hackmd.io/_uploads/rynmiTWF2.png)
 
-At execution level, the input expression RLCs enter EVM Circuit's lookup cell, and the RLCs with the same random challenge are done for the corresponding table expressions. The `ExecutionConfig`'s `config_lookup` method configures the lookup between the input expression RLCs and the table expression RLCs.
+At the execution level, the input expression RLCs enter EVM Circuit's lookup cell, and the RLCs with the same random challenge are done for the corresponding table expressions. The `ExecutionConfig`'s `config_lookup` method configures the lookup between the input expression RLCs and the table expression RLCs.
 
 #### Lookup Cells in EVM Circuit
 
-At each step, `CellManager` allocates a region with columns consisting of `CellType::Lookup(table)` that are for various types of lookups. Cells in these columns are filled with RLC result of input expressions induced by the execution trace. This is done by the `add_lookup` method in `ConstraintBuilder`. 
+At each step, `CellManager` allocates a region with columns consisting of `CellType::Lookup(table)` that are for various types of lookups. Cells in these columns are filled with the RLC result of input expressions induced by the execution trace. This is done by the `add_lookup` method in `ConstraintBuilder`. 
 
 The number of columns allocated for one type of lookup (corresponding lookup will be into a particular lookup table) follows the configuration setting in `LOOKUP_CONFIG`. These numbers are tunable in order to make the circuit more "compact", i.e., with less unused cells, so that performance can be improved.
 
 #### Challenge used for EVM Circuit's lookup cells
 
-The random challenge used to obtain RLC result of lookup's input expressions is given by `lookup_input`, which is obtained from `meta.challenge_usable_after(SecondPhase)`. So this random number is generated by the proof transcript after the second phase (i.e. phase 3). Notice that the input expressions (or table expressions) themselves can be RLC results. For example, Keccak table has columns of `input_rlc` and `output_rlc`. These RLC results are obtained using random challenges obtained in previous phases (such as phase 1 and phase 2). Therefore, the overall RLC results filled in an EVM Circuit's lookup cell maybe a result of nested RLCs.
+The random challenge used to obtain the RLC result of lookup's input expressions is given by `lookup_input`, which is obtained from `meta.challenge_usable_after(SecondPhase)`. So this random number is generated by the proof transcript after the second phase (i.e. phase 3). Notice that the input expressions (or table expressions) themselves can be RLC results. For example, Keccak table has columns of `input_rlc` and `output_rlc`. These RLC results are obtained using random challenges obtained in previous phases (such as phase 1 and phase 2). Therefore, the overall RLC results filled in an EVM Circuit's lookup cell may be the result of nested RLCs.
 
 ## Constraints 
 

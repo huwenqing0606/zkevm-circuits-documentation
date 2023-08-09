@@ -2,9 +2,11 @@
 tags: scroll documentation
 ---
 
+# Bytecode Circuit
+
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/bytecode_circuit.rs `develop` branch
 
-# The Bytecode table
+## The Bytecode table
 
 The EVM Circuit needs to lookup to the bytecode table that stores the correct bytecode information. This ensures that the bytes stored in the contract are the same as the bytes loaded in the table. The bytecode table has the following table layout:
 
@@ -15,7 +17,7 @@ The EVM Circuit needs to lookup to the bytecode table that stores the correct by
 
 Here `Header` is used to seperate bytecodes.
 
-# Purpose of the Bytecode Circuit
+## Purpose of the Bytecode Circuit
 
 The bytecode circuit aims at constraining the correctness of the above bytecode table. This includes:
 - constraints related to boundary behavior of tag: first and last row constraints, transition from `tag==byte` to `header` and vice versa, transition from `header` to `header`; 
@@ -25,7 +27,7 @@ The bytecode circuit aims at constraining the correctness of the above bytecode 
 - correct propagation of each row within one bytecode
 
 
-# Architecture and Design
+## Architecture and Design
 
 Raw `bytes` with the Keccak codehash of it `code_hash=keccak(&bytes[...])` are feed into `unroll_with_codehash` that runs over all the bytes and unroll them into `UnrolledBytecode{bytes, rows}`, which fits the bytecode table layout. This means each row contains `(code_hash, tag, index, is_code, value)`. (The only difference is that here `code_hash` is not RLCed yet.) Notice that only `PUSHx` will be followed by non-instruction bytes, so `is_code = push_rindex==0`, i.e. `unroll_with_codehash` computes `push_rindex` that decays from push size to zero and when it is zero it means the byte is an instruction code. With `UnrolledBytecode`, we contrain its rows via `BytecodeCircuit`, so the architecture looks like
 
@@ -38,7 +40,7 @@ stateDiagram
     BytecodeCircuit --> SubCircuit
 ```
 
-# Circuit Layout
+## Circuit Layout
 
 The `BytecodeCircuit` is configured using the following columns, (internal and external) tables, as well as chips (which are just smaller-sized circuits):
 
@@ -76,7 +78,7 @@ Here
 `BytecodeCircuitConfig` uses `assign_internal` and `set_row` to assign `witness: &[UnrolledBytecode<F>]` into `BytecodeCircuit`. The padding rows are assigned with `tag=header`, `code_hash` to be the empty code hash (specifically defined), and other columns of the bytecode table to be 0.
 
 
-# Constraints
+## Constraints
 
 - constraints related to boundary behavior of `tag`
     - `tag` is `header` for `q_first` or `q_last` is 1

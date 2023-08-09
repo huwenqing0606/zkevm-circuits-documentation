@@ -2,6 +2,8 @@
 tags: scroll documentation
 ---
 
+# Tx Circuit
+
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/tx_circuit.rs `develop` branch
 
 [ETHTransactions]: https://ethereum.org/en/developers/docs/transactions/
