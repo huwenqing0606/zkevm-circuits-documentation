@@ -47,7 +47,7 @@ In addition, $x_3$ stands for $x_3=x\mod r$.
 
 Let $x, y$ be in U256 and $p$ be the prime used in Modexp, $d<p$ be the remainder, both also in U256. Then the constraints for $x y \mod p = d$ is the same of that for $x y= kp+d$ with some $k$ and $d<p$.
 
-Note that $k$ may well overflow U256. For example, let $p=2$ and $x,y$ are close to $2^{256}-1$, then $k$ will easily overflow U256. We will first discuss the case when $k$ is in U256 only.
+Note that $k$ may well overflow U256. For example, let $p=2$ and $x,y$ are close to $2^{256}-1$, then $k$ will easily overflow U256 (<i>[ISSUE](https://github.com/scroll-tech/misc-precompiled-circuit/issues/5)</i>). To prevent this, we observe that $xy \mod p = (x\mod p)\cdot (y\mod p) \mod p$, so at initialization we always replace $x, y$ by $x\mod p$ and $y\mod p$. This ensures $xy< p^2$ so that $k<(kp+d)/p=xy/p<p<2^{256}$. 
 
 We use the [Chinese Remainder Theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem) (CRT):
 
@@ -99,73 +99,36 @@ x_3y_3 & \equiv & k_3p_3 + d_3 & \mod r \ ,
 d & < & p \ . &
 \end{array}\right.$$
 
-### Discussion: When $k$ overflows U256 in $xy=kp+d$
-
-When $x, y$ are in U256 and $p\geq 2$ is a prime, we must have $k$ in U512 (actually U511). So we can decompose $k$ into more limbs as
-$$k=k_0+k_1\cdot 2^{108} + k_2\cdot 2^{216}+ k_3 \cdot 2^{324} + k_4 \cdot 2^{432} \ ,$$
-i.e., $k=\overline{\underbrace{\kappa_0\kappa_1...\kappa_{107}}_{k_0}
-\underbrace{\kappa_{108}\kappa_{109}...\kappa_{215}}_{k_1}
-\underbrace{\kappa_{216}\kappa_{217}...\kappa_{323}}_{k_2}
-\underbrace{\kappa_{324}\kappa_{325}...\kappa_{431}}_{k_3}
-\underbrace{\kappa_{432}\kappa_{433}...\kappa_{511}}_{k_4}}$ in little-endian form. Then we have
-
-$$\begin{array}{ll}
-& k \mod n_1
-\\
-= & k_0+k_1+k_2\cdot (2^{108}-1+1)^2+k_3\cdot (2^{108}-1+1)^3+k_4\cdot (2^{108}-1+1)^4 \mod n_1
-\\
-= & k_0+k_1+k_2+k_3+k_4 \mod n_1 \ ,
-\end{array}$$
-and
-$$\begin{array}{ll}
-& k \mod n_2
-\\
-= & k_0+k_1\cdot 2^{108}+\left(k_2+k_3\cdot 2^{108}+k_4\cdot 2^{216}\right) \cdot 2^{216} \mod n_2
-\\
-= & k_0+k_1\cdot 2^{108} \mod n_2 \ .
-\end{array}$$
-
-Further we set $k \mod r =k_5$. So the number in limb representation for $k$ becomes $k=[k_0, k_1, k_2, k_3, k_4, k_5]$. Thus the constraints for $xy=kp+d$ for general $k$ becomes
-
-$$(2')\left\{\begin{array}{rcll}
-(x_0+x_1+x_2)(y_0+y_1+y_2) & \equiv & (k_0+k_1+k_2+k_3+k_4)(p_0+p_1+p_2) + (d_0+d_1+d_2)  & \mod (2^{108}-1) \ ,
-\\
-x_0y_0 + (x_1y_0+x_0y_1)\cdot 2^{108} & \equiv & k_0p_0 + (k_1p_0+k_0p_1)\cdot 2^{108} + d_0+d_1\cdot 2^{108} & \mod 2^{216} \ ,
-\\
-x_3y_3 & \equiv & k_5p_3 + d_3 & \mod r \ ,
-\\
-d & < & p \ . &
-\end{array}\right.$$
-As $k \mod n_2$ looks the same for the U256 case with 3 limbs, the second constraint will not change. 
-
 
 ## Circuit Design and Layout
 
 ### Circuit Design
 
-To form a circuit for Modexp we shall apply (2) to each iteration step in (1). In the code, method `ModexpChip.modexp` fills this purpose, it calls `ModexpChip.modmult` to check each step of $\langle R_{k-1}\cdot R_{k-1}\rangle_p$ and $\langle\langle R_{k-1}\cdot R_{k-1}\rangle_p, a\rangle_p$ based on the current bit (`select`) being 0 or 1. The constraints in `ModexpChip.modmult` are those listed in (2).
+To form a circuit for Modexp we shall apply (2) to each iteration step in (1). In the code, method `ModexpChip.modexp` fills this purpose, it calls `ModexpChip.modmult` to check each step of $\langle R_{k-1}\cdot R_{k-1}\rangle_p$ and $\langle\langle R_{k-1}\cdot R_{k-1}\rangle_p, a\rangle_p$ based on the current bit being 0 or 1 (via `select` method). The constraints in `ModexpChip.modmult` are those listed in (2).
 
 ### Circuit Layout 
 
-Circuit uses 2-rows for one constraint, with layout as follows:
+Circuit uses 2-rows for one custom-gate constraint, with layout as follows:
 
 |advice|advice|advice|advice|advice|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 |`l0`|`l1`|`l2`|`l3`|`d`|`c0`|`c1`|`c2`|`c3`|`cd`|`cdn`|`c`|`c03`|`c12`|`lookup_hint`|`lookup_ind`|`sel`|
 |None|None|None|None|`dn`|None|None|None|None|None|None|None|None|None|None|None|None|
 
+Note that the above table is a demonstration of how a custom-gate is layouted. The None terms simply stands for the fact that the custom-gate does not touch these cells. It does not mean that the circuit is layouted without these cells being filled with valid values. One can think of the actual circuit layout as the above shaped custom-gate (throwing away the None cells) falling down as in a tetris game. 
+
 Here `l0`, `l1`, `l2`, `l3`, `d` are advice columns (5 advice columns) and rest are fixed columns (12 fixed columns). The context of each cell is explained as follows:
 
 - `l0`-`l3` stand for the 4 limbs in decomposing a U256 `Number`; 
 - `d` is a limb term;
-- `dn` is a limb term, the next to `d`;
+- `dn` is a limb term, the next to `d`. It is used in `decompose_limb` method which decomposes a limb into binary cells, in big endian;
 - `c0`-`c3` are coefficients for each of the 4 limbs;
 - `cd`, `cdn` are coefficients for `d` and `dn`;
 - `c03` is the coefficient for `l0 * l3` and `c12` is the coefficient for `l1 * l2`;
 - `c` is a constant term added to the constraint equality;
 - `sel` is a binary indicator that enables this constraint or not;
-- `lookup_hint` is the size of limb lookup in terms of 12 bits (= one increment in size), so 108 bits takes size 9, usually use size 10 in case of overflow; (TODO: check this)
-- `lookup_ind` indicates whether to do limb lookup, take values 0u64 (no lookup) and 1u64 (lookup).
+- `lookup_hint` is the size of limb lookup for `l0` in terms of 12 bits (= one unit in size `sz`), so 108 bits takes size 9, usually use size 10 in case of overflow;
+- `lookup_ind` indicates whether to do limb lookup for `l0`, so it can be 0u64 (no lookup) and 1u64 (lookup).
 
 ### One-line constraint system
 
@@ -177,9 +140,14 @@ Each constraint equality will be written into the following general form ("one-l
 
 Modexp Circuit uses `assign_line` method to assign these cells. In `assign_line` method, witnesses are `l0`-`l3`, `d`, `dn`, coefficients are `c0`-`c3`, `cd`, `cdn`, `c03`, `c12`, `c`. The `sel` cell is taken to be 1, `lookup_ind` is `0u64` if `lookup_hint ==0` else it is `1u64`. The `assign_line` method returns the limbs `[l0, l1, l2, l3, d, dn]`.
 
-### range checks of limbs via lookup
+### Range checks of limbs via lookup
 
-Range checks of the limbs are done in a separate `RangeCheckChip`. The range check is usually applied to `l0` limb, and it is decomposed into 12-bit sublimbs for range lookup. Each range lookup checks a table with terms in the range $[0, 2^{12}=4096-1]$ listed in order. Lookup is configured using `register` method and range check chip is assigned using `provide_lookup_evidence` method. (TODO, more details...)
+Range checks of the limbs are done in a separate `RangeCheckChip`. The range check is usually applied to `l0` limb, and whenever the Modexp circuit needs a range check for the limb it will create a new gate with `l0` limb under lookup.
+
+The `RangeCheckChip` is connected with the Modexp Circuit via `register` method, in which we use lookup argument to assure that `l0` limb is contained as the first `acc` term in the `RangeCheckChip` and its target lookup size `lookup_hint` is contained in the first `rem` term in the `RangeCheckChip`. 
+
+After that, `RangeCheckChip` uses `provide_lookup_evidence` method to assign values to the range check chip. The range checks are configured by putting constraints that decompose the limb into 12-bit sub-limbs, with each sub-limb under lookup to a table with terms $[0, 2^{12}-1=4095]$ listed in increasing order. It also checks the 12-bit by 12-bit carry to higher digits are done in a correct way.
+
 
 ## Constraints
 
@@ -234,7 +202,7 @@ So its one-line constraint is given by the equation
 
 This method returns `OK`.
 
-<i>Q: factor 16 is used to prevent overflow?</i>
+Factor 16 here is used as a buffer to make sure that `v` is positive, so that we are enabled to do range check for `q` (if `v` is negative, range check for `q` becomes hard to perform). In the constraint equation related to $\mod 2^{108}-1$ that calls `mod_power108m1zero` method, each of the `limb0`, `limb1`, `limb2` will not exceed $4\cdot (2^{108}-1)$, so their signed combination in absolute value will not exceed $12\cdot (2^{108}-1)<16\cdot (2^{108}-1)$, which is the reason why we choose 16 as buffer here.
 
 #### constraint equation $(x_0+x_1+x_2)(y_0+y_1+y_2) \equiv (k_0+k_1+k_2)(p_0+p_1+p_2) + (d_0+d_1+d_2)  \mod (2^{108}-1)$ in (2) 
 
@@ -312,7 +280,9 @@ So its one-line constraint is given by the equation
 
 This method returns `OK`.
 
-<i>Q: is $2*2^{216}$ enough to prevent overflow in `mod_power216_mul`?</i>
+Factor 2 here is used as a buffer to make sure that `v` is positive, so that we are enabled to do range check for `q` (if `v` is negative, range check for `q` becomes hard to perform). In the constraint equation related to $\mod 2^{216}$ that calls `mod_power216zero` method, each of the `limb0`, `limb1`, `limb2` will not exceed $2\cdot 2^{216}$, so their signed combination in absolute value will not exceed $6\cdot 2^{216}<8\cdot 2^{216}-1$, which is the reason why we choose 2 as buffer here.
+
+<i>[ISSUE](https://github.com/scroll-tech/misc-precompiled-circuit/issues/6): `BUFMULT=2` i.e. $2*2^{216}$ is not enough to prevent overflow in `mod_power216_mul`. It has to be at least 7 and 8 will be a good choice.</i>
 
 #### constraint equation $x_0y_0 + (x_1y_0+x_0y_1)\cdot 2^{108}  \equiv k_0p_0 + (k_1p_0+k_0p_1)\cdot 2^{108} + d_0+d_1\cdot 2^{108}  \mod 2^{216}$ in (2) 
 
@@ -349,4 +319,4 @@ We take two U256 `Number` denoted as `lhs` (stand for $x$) and `rhs` (stand for 
 
 - call `mod_native_mul` with `lhs`$=x$, `rhs`=$y$ and `rem`$=d_3$. This checks $x_3y_3\equiv d_3 \mod r$ in (2). (Since field is $\mathbb{F}_r$, operation $\mod r$ is done automatically when doing field operations.)
 
-<i>Q: this is not correct? k3 and p3 missing? Need to check.</i>
+<i>[ISSUE](https://github.com/scroll-tech/misc-precompiled-circuit/issues/7): this is not correct? k3 and p3 missing? It has to be performed similarly to the previous two constraints and introduce the corresponding `mod_xxx_zero` function.</i>
