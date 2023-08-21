@@ -344,13 +344,13 @@ $$\forall i\in \{0... \boldsymbol{\mu}_{\textbf{s}}[2]-1\}: \boldsymbol{\mu}_{\t
 0 & \text{ otherwise .}
 \end{array}
 \right.$$
-Note that the data to be copied to memory that exceeds return data size ($\|\boldsymbol{\mu}_{\textbf{o}}\|$) will be padded with 0.
+Note that the data to be copied to memory that exceeds return data size ($\|\boldsymbol{\mu}_{\textbf{o}}\|$) will be padded by 0.
 
 For RETURNDATACOPY opcode, EVM Circuit does the following type of constraint checks together with witness assignments:
 
 - Constraints for stack pop of `dest_offset`, `data_offset` and `size`. This means they are assigned from the step's rw data (via bus mapping) and then they are checked by doing RwTable lookups with `tag=RwTableTag::Stack`, as well as verifying correct stack pointer update;
 - Constraints for call context related data including `last_callee_id`, `return_data_offset` (offset for $\boldsymbol{\mu}_{\textbf{o}}$) and `return_data_size` ($\|\boldsymbol{\mu}_{\textbf{o}}\|$). These are assigned and then checked by RwTable lookups with `tag=RwTableTag::CallContext`. Here return data means the output data from last call, from which we fetch data that is to be copied into memory;
-- Constraint return data size overflow check by `data_offset + size <= return_data_size` (THIS WAS RECENTLY REMOVED);
+- Constraints for ensuring no out-of-bound errors happen with `return_data_size`;
 - Constraints for memory related behavior. This includes memory address and expansion via `dest_offset` and `size`, as well as gas cost for memory expansion;
 - Constraints for copy behavior. This is done by lookup to CopyTable with `src_id=last_callee_id` (source call id) and `dst_id=` current step call id (destination call id), and corresponding source and destination addresses determined by `return_data_offset`, `return_data_size`, `data_offset`, `dest_offset` and `size` (that computes destination memory address);
 - `SameContextGadget`
