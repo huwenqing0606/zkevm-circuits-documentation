@@ -47,7 +47,7 @@ In addition, $x_3$ stands for $x_3=x\mod r$.
 
 Let $x, y$ be in U256 and $p$ be the prime used in Modexp, $d<p$ be the remainder, both also in U256. Then the constraints for $x y \mod p = d$ is the same of that for $x y= kp+d$ with some $k$ and $d<p$.
 
-Note that $k$ may well overflow U256. For example, let $p=2$ and $x,y$ are close to $2^{256}-1$, then $k$ will easily overflow U256 (<i>[ISSUE](https://github.com/scroll-tech/misc-precompiled-circuit/issues/5)</i>). To prevent this, we observe that $xy \mod p = (x\mod p)\cdot (y\mod p) \mod p$, so at initialization we always replace $x, y$ by $x\mod p$ and $y\mod p$. This ensures $xy< p^2$ so that $k<(kp+d)/p=xy/p<p<2^{256}$. 
+Note that $k$ may well overflow U256. For example, let $p=2$ and $x,y$ are close to $2^{256}-1$, then $k$ will easily overflow U256. To prevent this, we observe that in the iteration $(1)$ the $R_k$ ($k\geq 2$) is always a $\mod p$ value and the $\langle R_{k-1} \cdot R_{k-1} \rangle_p$ is also a $\mod p$ value. Since $xy \mod p = (x\mod p)\cdot y \mod p$, so in practice when applying to the iteration (1), we always have $x$ replaced by $x\mod p$. This ensures $xy< py$ so that $k<(kp+d)/p=xy/p<y<2^{256}$. 
 
 We use the [Chinese Remainder Theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem) (CRT):
 
@@ -87,7 +87,7 @@ $$\begin{array}{l}
 \end{array}$$
 because $n_2=2^{216}$.
 
-So constraints that ensure $xy=kp+d$ when $k$ is in U256 is given by
+So constraints that ensure $xy=kp+d$ is given by
 
 $$(2) \left\{\begin{array}{rcll}
 (x_0+x_1+x_2)(y_0+y_1+y_2) & \equiv & (k_0+k_1+k_2)(p_0+p_1+p_2) + (d_0+d_1+d_2)  & \mod (2^{108}-1) \ ,
@@ -268,7 +268,7 @@ This method finally returns `v=lhs.limb0*rhs.limb0+((lhs.limb0*rhs.limb1+lhs.lim
 
 #### `mod_power216_zero` method
 
-This method takes 3 limbs `limb0`, `limb1`, `limb2` and 3 signs `sign0`, `sign1`, `sign2` and computes `v=2*2^{216}+limb0*sign0+limb1*sign1+limb2*sign2`, `q=v/2^{216}`. After these results are obtained it assigns the following cells 
+This method takes 3 limbs `limb0`, `limb1`, `limb2` and 3 signs `sign0`, `sign1`, `sign2` and computes `v=8*2^{216}+limb0*sign0+limb1*sign1+limb2*sign2`, `q=v/2^{216}`. After these results are obtained it assigns the following cells 
 
 |advice|advice|advice|advice|advice|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
@@ -276,13 +276,11 @@ This method takes 3 limbs `limb0`, `limb1`, `limb2` and 3 signs `sign0`, `sign1`
 |None|None|None|None|`dn`=None|None|None|None|None|None|None|None|None|None|None|None|None|
 
 So its one-line constraint is given by the equation
-`-q*2^{216}+limb0*sign0+limb1*sign1+limb2*sign2+2*2^{216} == 0`.
+`-q*2^{216}+limb0*sign0+limb1*sign1+limb2*sign2+8*2^{216} == 0`.
 
 This method returns `OK`.
 
-Factor 2 here is used as a buffer to make sure that `v` is positive, so that we are enabled to do range check for `q` (if `v` is negative, range check for `q` becomes hard to perform). In the constraint equation related to $\mod 2^{216}$ that calls `mod_power216zero` method, each of the `limb0`, `limb1`, `limb2` will not exceed $2\cdot 2^{216}$, so their signed combination in absolute value will not exceed $6\cdot 2^{216}<8\cdot 2^{216}-1$, which is the reason why we choose 2 as buffer here.
-
-<i>[ISSUE](https://github.com/scroll-tech/misc-precompiled-circuit/issues/6): `BUFMULT=2` i.e. $2*2^{216}$ is not enough to prevent overflow in `mod_power216_mul`. It has to be at least 7 and 8 will be a good choice.</i>
+Factor 8 here is used as a buffer (`BUFMULT`) to make sure that `v` is positive, so that we are enabled to do range check for `q` (if `v` is negative, range check for `q` becomes hard to perform). In the constraint equation related to $\mod 2^{216}$ that calls `mod_power216zero` method, each of the `limb0`, `limb1`, `limb2` will not exceed $2\cdot 2^{216}$, so their signed combination in absolute value will not exceed $6\cdot 2^{216}<8\cdot 2^{216}-1$, which is the reason why we choose 8 as buffer here.
 
 #### constraint equation $x_0y_0 + (x_1y_0+x_0y_1)\cdot 2^{108}  \equiv k_0p_0 + (k_1p_0+k_0p_1)\cdot 2^{108} + d_0+d_1\cdot 2^{108}  \mod 2^{216}$ in (2) 
 
@@ -301,15 +299,15 @@ This makes use of `mod_native_mul` method.
 
 #### `mod_native_mul` method
 
-This method takes 3 U256 `Number` named as `lhs`, `rhs` and `rem`. Then it assigns the following cells 
+This method takes 5 U256 `Number` named as `lhs`, `rhs`, `rem`, `modulus`, `quotient`. Then it assigns the following cells 
 
 |advice|advice|advice|advice|advice|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-|`l0`=`lhs.limb3`|`l1`=`rhs.limb3`|`l2`=`rem.limb3`|`l3`=None|`d`=None|`c0`=None|`c1`=None|`c2`=None|`c3`=-1|`cd`=None|`cdn`=None|`c`=None|`c03`=None|`c12`=1|`lookup_hint`=0|`lookup_ind`=0u64|`sel`=1|
+|`l0`=`modulus.limb3`|`l1`=`lhs.limb3`|`l2`=`rhs.limb3`|`l3`=`quotient.limb3`|`d`=`rem.limb3`|`c0`=None|`c1`=None|`c2`=None|`c3`=None|`cd`=-1|`cdn`=None|`c`=None|`c03`=-1|`c12`=1|`lookup_hint`=0|`lookup_ind`=0u64|`sel`=1|
 |None|None|None|None|`dn`=None|None|None|None|None|None|None|None|None|None|None|None|None|
 
 So its one-line constraint is given by the equation
-`lhs.limb3*rhs.limb3-rem.limb3==0`.
+`-modulus.limb3*quotient.limb3+lhs.limb3*rhs.limb3-rem.limb3==0`.
 
 This method returns `rem.limb3`.
 
@@ -317,6 +315,67 @@ This method returns `rem.limb3`.
 
 We take two U256 `Number` denoted as `lhs` (stand for $x$) and `rhs` (stand for $y$), then 
 
-- call `mod_native_mul` with `lhs`$=x$, `rhs`=$y$ and `rem`$=d_3$. This checks $x_3y_3\equiv d_3 \mod r$ in (2). (Since field is $\mathbb{F}_r$, operation $\mod r$ is done automatically when doing field operations.)
+- call `mod_native_mul` with `lhs`$=x$, `rhs`=$y$, `rem`$=d$, `quotient`$=k$, `modulus`$=p$. This checks $x_3y_3\equiv k_3p_3 + d_3 \mod r$ in (2). (Since field is $\mathbb{F}_r$, operation $\mod r$ is done automatically when doing field operations.)
 
-<i>[ISSUE](https://github.com/scroll-tech/misc-precompiled-circuit/issues/7): this is not correct? k3 and p3 missing? It has to be performed similarly to the previous two constraints and introduce the corresponding `mod_xxx_zero` function.</i>
+
+### constraint for $d<p$
+
+A remaining constraint in (2) to ensure that $xy = kp + d$ is the comparison $d<p$. This makes use of the `lt_number` and `le_limb` functions.
+
+#### `lt_number` method
+
+This method takes two U256 `Number` denoted as `lhs` and `rhs` and returns `1` if `lhs<rhs`, returns `0` if otherwise.
+
+To achieve this, it devides `lhs` and `rhs` into limbs `lhs.limb[0], lhs.limb[1], lhs.limb[2]` and `rhs.limb[0], rhs.limb[1], rhs.limb[2]`. Then 
+- if `lhs.limb[2]<rhs.limb[2]`, returns `1`;
+- elseif `lhs.limb[1]<rhs.limb[1]`, returns `1`;
+- elseif `lhs.limb[0]<rhs.limb[0]`, returns `1`;
+- else returns `0`.
+
+To compare each `lhs.limb[i]<rhs.limb[i]`, it calls `le_limb` method to compare if `lhs.limb[i]>=rhs.limb[i]`.
+
+#### `le_limb` method
+
+This method takes two U256 `Number` denoted as `lhs` and `rhs` and returns `1` if `lhs<=rhs` and `0` otherwise.
+
+It computes
+- `diff_true = rhs - lhs`;
+- `diff_false = lhs - rhs - 1`;
+- `abs = rhs - lhs` if `rhs >= lhs` else `abs =  lhs - rhs - 1` if `rhs < lhs`;
+- `res = 1` if `rhs >= lhs` else `res = 0` if `rhs < lhs`;
+
+Then it fills the following constraints
+
+1. Checks `-diff_true+rhs-lhs==0` via the following cell assignment
+
+|advice|advice|advice|advice|advice|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|`l0`=`diff_true`|`l1`=`rhs`|`l2`=`lhs`|`l3`=None|`d`=None|`c0`=`-1`|`c1`=`1`|`c2`=`-1`|`c3`=None|`cd`=None|`cdn`=None|`c`=None|`c03`=None|`c12`=None|`lookup_hint`=0|`lookup_ind`=0u64|`sel`=1|
+|None|None|None|None|`dn`=None|None|None|None|None|None|None|None|None|None|None|None|None|
+
+Then set `true_limb=diff_true`
+
+2. Checks `-diff_false-rhs+lhs-1==0` via the following cell assignment 
+
+|advice|advice|advice|advice|advice|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|`l0`=`diff_false`|`l1`=`rhs`|`l2`=`lhs`|`l3`=None|`d`=None|`c0`=`-1`|`c1`=`-1`|`c2`=`1`|`c3`=None|`cd`=None|`cdn`=None|`c`=`-1`|`c03`=None|`c12`=None|`lookup_hint`=0|`lookup_ind`=0u64|`sel`=1|
+|None|None|None|None|`dn`=None|None|None|None|None|None|None|None|None|None|None|None|None|
+
+Then set `false_limb=diff_false`
+
+3. Checks `res(abs-true_limb)==0` via the following cell assignment
+
+|advice|advice|advice|advice|advice|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|`l0`=`abs`|`l1`=`res`|`l2`=`true_limb`|`l3`=`res`|`d`=None|`c0`=None|`c1`=None|`c2`=None|`c3`=None|`cd`=None|`cdn`=None|`c`=None|`c03`=1|`c12`=-1|`lookup_hint`=0|`lookup_ind`=0u64|`sel`=1|
+|None|None|None|None|`dn`=None|None|None|None|None|None|None|None|None|None|None|None|None|
+
+4. Checks `(res-1)(abs-false_limb)==0` via the following cell assignment
+
+|advice|advice|advice|advice|advice|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|fixed|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|`l0`=`res`|`l1`=`res`|`l2`=`abs`|`l3`=`false_limb`|`d`=None|`c0`=None|`c1`=None|`c2`=`-1`|`c3`=`1`|`cd`=None|`cdn`=None|`c`=None|`c03`=-1|`c12`=1|`lookup_hint`=9|`lookup_ind`=1u64|`sel`=1|
+|None|None|None|None|`dn`=None|None|None|None|None|None|None|None|None|None|None|None|None|
+
+This method returns `res`.
