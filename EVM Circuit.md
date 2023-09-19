@@ -340,7 +340,7 @@ $r=\mu_{s}'[0]$;
 
 #### `returndatacopy`
 
-According to the [ETH Yellow Paper], the RETURNDATACOPY opcode pops 3 stack elements $\mu_{s}[0]$=`dest_offset`, $\mu_{s}[1]$=`data_offset` and $\mu_{s}[2]$=`size`. It copies output data from the previous call to memory. The copied output data starts from `data_offset` within return data from last call and memory copy starts from `dest_offset`, with copy data size equal to `size`. Denote by $\mu'_{m}$ the updated memory state and $\mu_{o}$ the return data from last call, then the rule is given by the following formula
+According to the [ETH Yellow Paper], the RETURNDATACOPY opcode pops 3 stack elements $\mu_{s}[0]$=`dest_offset`, $\mu_{s}[1]$=`data_offset` and $\mu_{s}[2]$=`size`. It copies output data from the previous call to memory. The copied output data starts from `data_offset` within return data from last call and memory copy starts from `dest_offset`, with copy data size equal to `size`. Denote by $\mu'_m$ the updated memory state and $\mu_o$ the return data from last call, then the rule is given by the following formula
 ```math
 \forall i\in \{0... \boldsymbol{\mu}_{\textbf{s}}[2]-1\}: \boldsymbol{\mu}_{\textbf{m}}'[\boldsymbol{\mu}_{\textbf{s}}[0]+i]=\left\{
 \begin{array}{ll}
@@ -355,7 +355,7 @@ Note that the data to be copied to memory that exceeds return data size ($\|\bol
 For RETURNDATACOPY opcode, EVM Circuit does the following type of constraint checks together with witness assignments:
 
 - Constraints for stack pop of `dest_offset`, `data_offset` and `size`. This means they are assigned from the step's rw data (via bus mapping) and then they are checked by doing RwTable lookups with `tag=RwTableTag::Stack`, as well as verifying correct stack pointer update;
-- Constraints for call context related data including `last_callee_id`, `return_data_offset` (offset for $\boldsymbol{\mu}_{\textbf{o}}$) and `return_data_size` ($\|\boldsymbol{\mu}_{\textbf{o}}\|$). These are assigned and then checked by RwTable lookups with `tag=RwTableTag::CallContext`. Here return data means the output data from last call, from which we fetch data that is to be copied into memory;
+- Constraints for call context related data including `last_callee_id`, `return_data_offset` (offset for $\mu_{o}$) and `return_data_size` ($\|\mu_o\|$). These are assigned and then checked by RwTable lookups with `tag=RwTableTag::CallContext`. Here return data means the output data from last call, from which we fetch data that is to be copied into memory;
 - Constraints for ensuring no out-of-bound errors happen with `return_data_size`;
 - Constraints for memory related behavior. This includes memory address and expansion via `dest_offset` and `size`, as well as gas cost for memory expansion;
 - Constraints for copy behavior. This is done by lookup to CopyTable with `src_id=last_callee_id` (source call id) and `dst_id=` current step call id (destination call id), and corresponding source and destination addresses determined by `return_data_offset`, `return_data_size`, `data_offset`, `dest_offset` and `size` (that computes destination memory address);
