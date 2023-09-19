@@ -8,6 +8,8 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/sig_circuit.rs `develop` branch
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/rk6AZvlo2
+
 ## Ethereum's tx signature process
 
 According to the [Elliptic Curve Digital Signature Algorithm] (ECDSA), the signatures `(r,s)` are calculated via ECDSA from `msg_hash` and a `public_key` using the formula
