@@ -29,9 +29,9 @@ We shall first explain the Keccak hash function to be proved by our Keccak Circu
 
 ### Keccak-f permutation function
 
-Any instance of the Keccak sponge function family makes use of one of the seven Keccak-$f$ permutations, denoted Keccak-$f[b]$, where $b \in \{25, 50, 100, 200, 400, 800, 1600\}$ is the width of the permutation. These Keccak-$f$ permutations are iterated constructions consisting of a sequence of almost identical rounds. The number of rounds $n_r$ depends on the permutation width, and is given by $n_r = 12 + 2 \ell$, where $2^\ell = \dfrac{b}{25}$. 
+Any instance of the Keccak sponge function family makes use of one of the seven Keccak-f permutations, denoted Keccak-f[b], where $b \in \{25, 50, 100, 200, 400, 800, 1600\}$ is the width of the permutation. These Keccak-f permutations are iterated constructions consisting of a sequence of almost identical rounds. The number of rounds $n_r$ depends on the permutation width, and is given by $n_r = 12 + 2 \ell$, where $2^\ell = \dfrac{b}{25}$. 
 
-We focus on Keccak-$f[1600]$ which has $n_r=24$ rounds. At each round $1\leq k\leq n_r$, input are $5\times 5$ lanes of 64 bit words $A[x,y]$, where $[x,y]\in \{0,...,4\}\times \{0,...,4\}$ indicate the lane and the length of each lane is $64$-bit word. We then perform the following operations on $A[x,y]$:
+We focus on Keccak-f[1600] which has $n_r=24$ rounds. At each round $1\leq k\leq n_r$, input are $5\times 5$ lanes of 64 bit words $A[x,y]$, where $[x,y]\in \{0,...,4\}\times \{0,...,4\}$ indicate the lane and the length of each lane is $64$-bit word. We then perform the following operations on $A[x,y]$:
 
 - $\theta$-step:  
 $$\begin{array}{rl}
