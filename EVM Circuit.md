@@ -326,7 +326,7 @@ Then the constraints are
 \text{ and } a_\text{reduced} == 0 \text{ if } n=0$ (ModGadget); 
 - $a_\text{reduced}\cdot b + 0  == d\cdot 2^{256} + e$ (MulAddWords512Gadget);
 - $k\cdot n + r == d\cdot 2^{256} + e$ (MulAddWords512Gadget);
-- ```math 1 - \chi(r<n) - \chi(n _ sum=0) == 0``` (IsZeroGadget, LtWordGadget);
+- `1 - 1(r<n) - 1(n_sum=0) == 0` (IsZeroGadget, LtWordGadget);
 - `SameContextGadget`
     - opcodeID checks: opId $==$ OpcodeId(0x09);
     - state transition: rw_counter +4; stack\_pointer +2; pc +1; gas - op_cost;
@@ -340,14 +340,16 @@ $r=\mu_{s}'[0]$;
 
 #### `returndatacopy`
 
-According to the [ETH Yellow Paper], the RETURNDATACOPY opcode pops 3 stack elements $\boldsymbol{\mu}_{\textbf{s}}[0]$=`dest_offset`, $\boldsymbol{\mu}_{\textbf{s}}[1]$=`data_offset` and $\boldsymbol{\mu}_{\textbf{s}}[2]$=`size`. It copies output data from the previous call to memory. The copied output data starts from `data_offset` within return data from last call and memory copy starts from `dest_offset`, with copy data size equal to `size`. Denote by $\boldsymbol{\mu}'_{\textbf{m}}$ the updated memory state and $\boldsymbol{\mu}_{\textbf{o}}$ the return data from last call, then the rule is given by the following formula
-$$\forall i\in \{0... \boldsymbol{\mu}_{\textbf{s}}[2]-1\}: \boldsymbol{\mu}_{\textbf{m}}'[\boldsymbol{\mu}_{\textbf{s}}[0]+i]=\left\{
+According to the [ETH Yellow Paper], the RETURNDATACOPY opcode pops 3 stack elements $\mu_{s}[0]$=`dest_offset`, $\mu_{s}[1]$=`data_offset` and $\mu_{s}[2]$=`size`. It copies output data from the previous call to memory. The copied output data starts from `data_offset` within return data from last call and memory copy starts from `dest_offset`, with copy data size equal to `size`. Denote by $\mu'_{m}$ the updated memory state and $\mu_{o}$ the return data from last call, then the rule is given by the following formula
+```math
+\forall i\in \{0... \boldsymbol{\mu}_{\textbf{s}}[2]-1\}: \boldsymbol{\mu}_{\textbf{m}}'[\boldsymbol{\mu}_{\textbf{s}}[0]+i]=\left\{
 \begin{array}{ll}
 \boldsymbol{\mu}_{\textbf{o}}[\boldsymbol{\mu}_{\textbf{s}}[1]+i] & \text{ if } \boldsymbol{\mu}_{\textbf{s}}[1]+i<\|\boldsymbol{\mu}_{\textbf{o}}\|
 \\
 0 & \text{ otherwise .}
 \end{array}
-\right.$$
+\right.
+```
 Note that the data to be copied to memory that exceeds return data size ($\|\boldsymbol{\mu}_{\textbf{o}}\|$) will be padded by 0.
 
 For RETURNDATACOPY opcode, EVM Circuit does the following type of constraint checks together with witness assignments:
