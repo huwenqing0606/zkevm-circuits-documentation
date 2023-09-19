@@ -147,7 +147,7 @@ After padding, the input is extended to be with length in bytes a multiple of `R
 #### Absorb
 
 Following the result of padding represented in bits, in each chunk further divide this chunk into 17 sections with length 64 for each section. At the first chunk, initialize from all $A[i][j]=0$, then we perform the following absorb operation: for each of the first 17 words $A[i][j], i+5j<17$, we let $\verb"idx"=i+5j$ and we update
-$$A[i][j] \leftarrow A[i][j]\oplus \verb"chunk[idx * 64..(idx + 1) * 64]"$$ to obtain output $A[i][j]$. We perform this absorb operation before the 24 rounds of Keccak-$f$ permutation. Then the 24-rounds of Keccak-$f$ permutation is followed to operate on all $A[i][j]$'s where $0\leq i, j\leq 4$. After that we move to next chunk and repeat this process starting from the output $A[i][j]$ from last iteration (absorb + permutation). Such iteration is continued until the final chunk (which may contain padding data).
+$$A[i][j] \leftarrow A[i][j]\oplus \verb"chunk[idx * 64..(idx + 1) * 64]"$$ to obtain output $A[i][j]$. We perform this absorb operation before the 24 rounds of Keccak-f permutation. Then the 24-rounds of Keccak-f permutation is followed to operate on all $A[i][j]$'s where $0\leq i, j\leq 4$. After that we move to next chunk and repeat this process starting from the output $A[i][j]$ from last iteration (absorb + permutation). Such iteration is continued until the final chunk (which may contain padding data).
 
 #### Squeeze
 
@@ -326,7 +326,7 @@ So total number of Keccak rows consumed by one hash is equal to the product of t
 
 ### State data
 
-State data (used to be denoted as $A[x,y]$ in our section on Keccak-$f$ permutation) before and after the Keccak-$f$ permutation are stored in $s[i][j]$ and $s_{\text{next}}[i][j]$ for $0\leq i,j\leq 4$. Each $s[i][j]$ stands for a $64$-bit Keccak-sparse-word-representation (with bits stand for `[0,...,7]`).
+State data (used to be denoted as $A[x,y]$ in our section on Keccak-f permutation) before and after the Keccak-f permutation are stored in $s[i][j]$ and $s_{\text{next}}[i][j]$ for $0\leq i,j\leq 4$. Each $s[i][j]$ stands for a $64$-bit Keccak-sparse-word-representation (with bits stand for `[0,...,7]`).
 
 ### theta-step
 
@@ -342,9 +342,9 @@ After that, calculate
 $$os[i][j]=s[i][j]+bc[(i+4)\mod 5]+\text{rot}(bc[(i+1)\mod 5], 1) $$ and set it to be the new state $s[i][j]$.
 
 #### Rationale 
-- <i>Soundness</i>: Use the symbols in the previous section on Keccak-$f$ permutation function, it can be checked that $C[x]$ is the same as the parity of $A[x,0]+A[x,1]+...+A[x,4]$. So this is what $bc[i]$ checks at the `normalize_6` table lookup step. 
+- <i>Soundness</i>: Use the symbols in the previous section on Keccak-f permutation function, it can be checked that $C[x]$ is the same as the parity of $A[x,0]+A[x,1]+...+A[x,4]$. So this is what $bc[i]$ checks at the `normalize_6` table lookup step. 
 In a same rationale, $os[i][j]$ after normalization stands for the parity of $A[x,y]\oplus D[x]$. This normalization is postponed to $\rho/\pi$-step using `normalize_4` table lookup. 
-- <i>Completeness</i>: Since $C[x]$ is the same as the parity of $A[x,0]+A[x,1]+...+A[x,4]$, any selection of witnesses that satisfy original $\theta$-step in the Section on Keccak-$f$ permutation function will pass the constraints.
+- <i>Completeness</i>: Since $C[x]$ is the same as the parity of $A[x,0]+A[x,1]+...+A[x,4]$, any selection of witnesses that satisfy original $\theta$-step in the Section on Keccak-f permutation function will pass the constraints.
 
 ### rho/pi-step
 
