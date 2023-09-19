@@ -345,9 +345,9 @@ We take two U256 `Number` denoted as `lhs` (stand for $x$) and `rhs` (stand for 
 - call `mod_native_mul` with `lhs`$=x$, `rhs`=$y$, `rem`$=d$, `quotient`$=k$, `modulus`$=p$. This checks $x_3y_3\equiv k_3p_3 + d_3 \mod r$ in (2). (Since field is $\mathbb{F}_r$, operation $\mod r$ is done automatically when doing field operations.)
 
 
-### constraint for $d<p$
+### constraint for d<p
 
-A remaining constraint in (2) to ensure that $xy = kp + d$ is the comparison $d<p$. This makes use of the `lt_number` and `le_limb` functions.
+A remaining constraint in (2) to ensure that $xy = kp + d$ is the comparison d<p. This makes use of the `lt_number` and `le_limb` functions.
 
 #### `lt_number` method
 
