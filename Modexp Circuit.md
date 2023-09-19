@@ -53,7 +53,11 @@ In addition, $x_3$ stands for $x_3=x\mod r$.
 
 ## Constraint system for $x y \mod p = d$
 
-Let $x, y$ be in U256 and $p$ be the prime used in Modexp, $d<p$ be the remainder, both also in U256. Then the constraints for $x y \mod p = d$ is the same of that for $x y= kp+d$ with some $k$ and $d<p$.
+Let x, y be in U256 and p be the prime used in Modexp, d<p be the remainder, both also in U256. Then the constraints for 
+$x y \mod p = d$ 
+is the same of that for 
+$x y= kp+d$ 
+with some $k$ and $d<p$.
 
 Note that $k$ may well overflow U256. For example, let $p=2$ and $x,y$ are close to $2^{256}-1$, then $k$ will easily overflow U256. To prevent this, we observe that in the iteration $(1)$ the $R_k$ ($k\geq 2$) is always a $\mod p$ value and the 
 $\langle R_{k-1} \cdot R_{k-1} \rangle_p$ 
