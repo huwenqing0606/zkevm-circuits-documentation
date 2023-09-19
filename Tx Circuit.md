@@ -6,6 +6,8 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/tx_circuit.rs `develop` branch
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/B1454z6_3
+
 [ETHTransactions]: https://ethereum.org/en/developers/docs/transactions/
 
 [EIP2718]: https://eips.ethereum.org/EIPS/eip-2718
