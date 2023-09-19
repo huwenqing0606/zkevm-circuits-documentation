@@ -326,7 +326,7 @@ Then the constraints are
 \text{ and } a_\text{reduced} == 0 \text{ if } n=0$ (ModGadget); 
 - $a_\text{reduced}\cdot b + 0  == d\cdot 2^{256} + e$ (MulAddWords512Gadget);
 - $k\cdot n + r == d\cdot 2^{256} + e$ (MulAddWords512Gadget);
-- $1-\chi(r<n)-\chi(n _ sum=0) == 0$ (IsZeroGadget, LtWordGadget);
+- ```math 1 - \chi(r<n) - \chi(n _ sum=0) == 0``` (IsZeroGadget, LtWordGadget);
 - `SameContextGadget`
     - opcodeID checks: opId $==$ OpcodeId(0x09);
     - state transition: rw_counter +4; stack\_pointer +2; pc +1; gas - op_cost;
