@@ -34,13 +34,15 @@ Any instance of the Keccak sponge function family makes use of one of the seven 
 We focus on Keccak-f[1600] which has $n_r=24$ rounds. At each round $1\leq k\leq n_r$, input are $5\times 5$ lanes of 64 bit words $A[x,y]$, where $[x,y]\in \{0,...,4\}\times \{0,...,4\}$ indicate the lane and the length of each lane is $64$-bit word. We then perform the following operations on $A[x,y]$:
 
 - $\theta$-step:  
-$$\begin{array}{rl}
+```math
+\begin{array}{rl}
 C[x]& =A[x,0]\oplus A[x,1]\oplus A[x,2] \oplus A[x,3]\oplus A[x,4] \ , \ x=0,...,4 \ ,
 \\
 D[x,z]& =C[x-1]\oplus \text{ROT}(C[x+1], 1) \ , \ x=0,...,4, \ , 
 \\
 A[x,y] & = A[x,y]\oplus D[x] \ , \ x=0,...,4, y=0,...,4, \ .
-\end{array}$$
+\end{array}
+```
 
 - $\rho$ and $\pi$-steps:  
 $$B[y,2x+3y]=\text{ROT}(A[x,y], r[x,y]) \ , \ x=0,...,4, y=0,...,4 \ ,$$
