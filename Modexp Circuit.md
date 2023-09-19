@@ -57,10 +57,12 @@ Let x, y be in U256 and p be the prime used in Modexp, d<p be the remainder, bot
 $x y \mod p = d$ 
 is the same of that for 
 $x y= kp+d$ 
-with some $k$ and $d<p$.
+with some $k$ and d<p.
 
-Note that $k$ may well overflow U256. For example, let $p=2$ and $x,y$ are close to $2^{256}-1$, then $k$ will easily overflow U256. To prevent this, we observe that in the iteration $(1)$ the $R_k$ ($k\geq 2$) is always a $\mod p$ value and the 
-$\langle R_{k-1} \cdot R_{k-1} \rangle_p$ 
+Note that k may well overflow U256. For example, let p=2 and x,y are close to $2^{256}-1$, then k will easily overflow U256. To prevent this, we observe that in the iteration (1) the $R_k$ ($k\geq 2$) is always a $\mod p$ value and the 
+```math
+\langle R_{k-1} \cdot R_{k-1} \rangle_p
+```
 is also a $\mod p$ value. Since 
 $xy \mod p = (x\mod p)\cdot y \mod p$, 
 so in practice when applying to the iteration (1), we always have $x$ replaced by $x\mod p$. This ensures $xy< py$ so that $k<(kp+d)/p=xy/p<y<2^{256}$. 
