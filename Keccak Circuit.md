@@ -1,5 +1,3 @@
-link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/H1vMF0_u2
-
 ---
 tags: scroll documentation
 ---
@@ -7,6 +5,8 @@ tags: scroll documentation
 # Keccak Circuit
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/keccak_circuit.rs `develop` branch
+
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/H1vMF0_u2
 
 [NIST Keccak Spec]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
 
