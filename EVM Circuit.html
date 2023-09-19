@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        EVM Circuit - HackMD
+    </title>
+    <link rel="icon" type="image/png" href="https://hackmd.io/favicon.png">
+    <link rel="apple-touch-icon" href="https://hackmd.io/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css" integrity="sha256-QiWfLIsCT02Sdwkogf6YMiQlj4NE84MKkzEMkZnMGdg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@hackmd/emojify.js@2.1.0/dist/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);.hljs{background:#fff;color:#333;display:block;overflow-x:auto;padding:.5em}.hljs-comment,.hljs-meta{color:#969896}.hljs-emphasis,.hljs-quote,.hljs-string,.hljs-strong,.hljs-template-variable,.hljs-variable{color:#df5000}.hljs-keyword,.hljs-selector-tag,.hljs-type{color:#a71d5d}.hljs-attribute,.hljs-bullet,.hljs-literal,.hljs-number,.hljs-symbol{color:#0086b3}.hljs-built_in,.hljs-builtin-name{color:#005cc5}.hljs-name,.hljs-section{color:#63a35c}.hljs-tag{color:#333}.hljs-attr,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-title{color:#795da3}.hljs-addition{background-color:#eaffea;color:#55a532}.hljs-deletion{background-color:#ffecec;color:#bd2c00}.hljs-link{text-decoration:underline}.markdown-body{word-wrap:break-word;font-size:16px;line-height:1.5}.markdown-body:after,.markdown-body:before{content:"";display:table}.markdown-body:after{clear:both}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body .absent{color:#c00}.markdown-body .anchor{float:left;line-height:1;margin-left:-20px;padding-right:4px}.markdown-body .anchor:focus{outline:none}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-bottom:16px;margin-top:0}.markdown-body hr{background-color:#e7e7e7;border:0;height:.25em;margin:24px 0;padding:0}.markdown-body blockquote{border-left:.25em solid #ddd;color:#777;font-size:16px;padding:0 1em}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body kbd,.popover kbd{background-color:#fcfcfc;border:1px solid;border-color:#ccc #ccc #bbb;border-radius:3px;box-shadow:inset 0 -1px 0 #bbb;color:#555;display:inline-block;font-size:11px;line-height:10px;padding:3px 5px;vertical-align:middle}.markdown-body .loweralpha{list-style-type:lower-alpha}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{font-weight:600;line-height:1.25;margin-bottom:16px;margin-top:24px}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{color:#000;vertical-align:middle;visibility:hidden}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{text-decoration:none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{visibility:visible}.markdown-body h1 code,.markdown-body h1 tt,.markdown-body h2 code,.markdown-body h2 tt,.markdown-body h3 code,.markdown-body h3 tt,.markdown-body h4 code,.markdown-body h4 tt,.markdown-body h5 code,.markdown-body h5 tt,.markdown-body h6 code,.markdown-body h6 tt{font-size:inherit}.markdown-body h1{font-size:2em}.markdown-body h1,.markdown-body h2{border-bottom:1px solid #eee;padding-bottom:.3em}.markdown-body h2{font-size:1.5em}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{color:#777;font-size:.85em}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol.no-list,.markdown-body ul.no-list{list-style-type:none;padding:0}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-bottom:0;margin-top:0}.markdown-body li>p{margin-top:16px}.markdown-body li+li{padding-top:.25em}.markdown-body dl{padding:0}.markdown-body dl dt{font-size:1em;font-style:italic;font-weight:700;margin-top:16px;padding:0}.markdown-body dl dd{margin-bottom:16px;padding:0 16px}.markdown-body table{display:block;overflow:auto;width:100%;word-break:normal;word-break:keep-all}.markdown-body table th{font-weight:700}.markdown-body table td,.markdown-body table th{border:1px solid #ddd;padding:6px 13px}.markdown-body table tr{background-color:#fff;border-top:1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color:#f8f8f8}.markdown-body img{background-color:#fff;box-sizing:initial;max-width:100%}.markdown-body img[align=right]{padding-left:20px}.markdown-body img[align=left]{padding-right:20px}.markdown-body .emoji{background-color:initial;max-width:none;vertical-align:text-top}.markdown-body span.frame{display:block;overflow:hidden}.markdown-body span.frame>span{border:1px solid #ddd;display:block;float:left;margin:13px 0 0;overflow:hidden;padding:7px;width:auto}.markdown-body span.frame span img{display:block;float:left}.markdown-body span.frame span span{clear:both;color:#333;display:block;padding:5px 0 0}.markdown-body span.align-center{clear:both;display:block;overflow:hidden}.markdown-body span.align-center>span{display:block;margin:13px auto 0;overflow:hidden;text-align:center}.markdown-body span.align-center span img{margin:0 auto;text-align:center}.markdown-body span.align-right{clear:both;display:block;overflow:hidden}.markdown-body span.align-right>span{display:block;margin:13px 0 0;overflow:hidden;text-align:right}.markdown-body span.align-right span img{margin:0;text-align:right}.markdown-body span.float-left{display:block;float:left;margin-right:13px;overflow:hidden}.markdown-body span.float-left span{margin:13px 0 0}.markdown-body span.float-right{display:block;float:right;margin-left:13px;overflow:hidden}.markdown-body span.float-right>span{display:block;margin:13px auto 0;overflow:hidden;text-align:right}.markdown-body code,.markdown-body tt{background-color:#0000000a;border-radius:3px;font-size:85%;margin:0;padding:.2em 0}.markdown-body code:after,.markdown-body code:before,.markdown-body tt:after,.markdown-body tt:before{content:"\00a0";letter-spacing:-.2em}.markdown-body code br,.markdown-body tt br{display:none}.markdown-body del code{text-decoration:inherit}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{background:#0000;border:0;font-size:100%;margin:0;padding:0;white-space:pre;word-break:normal}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{border-radius:3px;font-size:85%;line-height:1.45;overflow:auto}.markdown-body:not(.next-editor) pre{background-color:#f7f7f7;padding:16px}.markdown-body pre code,.markdown-body pre tt{word-wrap:normal;background-color:initial;border:0;display:inline;line-height:inherit;margin:0;max-width:auto;overflow:visible;padding:0}.markdown-body pre code:after,.markdown-body pre code:before,.markdown-body pre tt:after,.markdown-body pre tt:before{content:normal}.markdown-body .csv-data td,.markdown-body .csv-data th{font-size:12px;line-height:1;overflow:hidden;padding:5px;text-align:left;white-space:nowrap}.markdown-body .csv-data .blob-line-num{background:#fff;border:0;padding:10px 8px 9px;text-align:right}.markdown-body .csv-data tr{border-top:0}.markdown-body .csv-data th{background:#f8f8f8;border-top:0;font-weight:700}.news .alert .markdown-body blockquote{border:0;padding:0 0 0 40px}.activity-tab .news .alert .commits,.activity-tab .news .markdown-body blockquote{padding-left:0}.task-list-item{list-style-type:none}.task-list-item label{font-weight:400}.task-list-item.enabled label{cursor:pointer}.task-list-item+.task-list-item{margin-top:3px}.task-list-item-checkbox{cursor:default!important;float:left;margin:.31em 0 .2em -1.3em!important;vertical-align:middle}.markdown-body{max-width:758px;overflow:visible!important;padding-bottom:40px;padding-top:40px;position:relative}.markdown-body.next-editor{overflow-x:hidden!important}.markdown-body .emoji{vertical-align:top}.markdown-body pre{border:inherit!important}.markdown-body code{color:inherit!important}.markdown-body pre code .wrapper{display:-moz-inline-flex;display:-ms-inline-flex;display:-o-inline-flex;display:inline-flex}.markdown-body pre code .gutter{float:left;overflow:hidden;-webkit-user-select:none;user-select:none}.markdown-body pre code .gutter.linenumber{border-right:3px solid #6ce26c!important;box-sizing:initial;color:#afafaf!important;cursor:default;display:inline-block;min-width:20px;padding:0 8px 0 0;position:relative;text-align:right;z-index:4}.markdown-body pre code .gutter.linenumber>span:before{content:attr(data-linenumber)}.markdown-body pre code .code{float:left;margin:0 0 0 16px}.markdown-body .gist .line-numbers{border-bottom:none;border-left:none;border-top:none}.markdown-body .gist .line-data{border:none}.markdown-body .gist table{border-collapse:inherit!important;border-spacing:0}.markdown-body code[data-gist-id]{background:none;padding:0}.markdown-body code[data-gist-id]:after,.markdown-body code[data-gist-id]:before{content:""}.markdown-body code[data-gist-id] .blob-num{border:unset}.markdown-body code[data-gist-id] table{margin-bottom:unset;overflow:unset}.markdown-body code[data-gist-id] table tr{background:unset}.markdown-body[dir=rtl] pre{direction:ltr}.markdown-body[dir=rtl] code{direction:ltr;unicode-bidi:embed}.markdown-body .alert>p:last-child{margin-bottom:0}.markdown-body pre.abc,.markdown-body pre.flow-chart,.markdown-body pre.graphviz,.markdown-body pre.mermaid,.markdown-body pre.sequence-diagram,.markdown-body pre.vega{background-color:inherit;border-radius:0;overflow:visible;text-align:center;white-space:inherit}.markdown-body pre.abc>code,.markdown-body pre.flow-chart>code,.markdown-body pre.graphviz>code,.markdown-body pre.mermaid>code,.markdown-body pre.sequence-diagram>code,.markdown-body pre.vega>code{text-align:left}.markdown-body pre.abc>svg,.markdown-body pre.flow-chart>svg,.markdown-body pre.graphviz>svg,.markdown-body pre.mermaid>svg,.markdown-body pre.sequence-diagram>svg,.markdown-body pre.vega>svg{height:100%;max-width:100%}.markdown-body pre>code.wrap{word-wrap:break-word;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap}.markdown-body .alert>p:last-child,.markdown-body .alert>ul:last-child{margin-bottom:0}.markdown-body summary{display:list-item}.markdown-body summary:focus{outline:none}.markdown-body details summary{cursor:pointer}.markdown-body details:not([open])>:not(summary){display:none}.markdown-body figure{margin:1em 40px}.markdown-body .mark,.markdown-body mark{background-color:#fff1a7}.vimeo,.youtube{background-color:#000;background-position:50%;background-repeat:no-repeat;background-size:contain;cursor:pointer;display:table;overflow:hidden;text-align:center}.vimeo,.youtube{position:relative;width:100%}.youtube{padding-bottom:56.25%}.vimeo img{object-fit:contain;width:100%;z-index:0}.youtube img{object-fit:cover;z-index:0}.vimeo iframe,.youtube iframe,.youtube img{height:100%;left:0;position:absolute;top:0;width:100%}.vimeo iframe,.youtube iframe{vertical-align:middle;z-index:1}.vimeo .icon,.youtube .icon{color:#fff;height:auto;left:50%;opacity:.3;position:absolute;top:50%;transform:translate(-50%,-50%);transition:opacity .2s;width:auto;z-index:0}.vimeo:hover .icon,.youtube:hover .icon{opacity:.6;transition:opacity .2s}.slideshare .inner,.speakerdeck .inner{position:relative;width:100%}.slideshare .inner iframe,.speakerdeck .inner iframe{bottom:0;height:100%;left:0;position:absolute;right:0;top:0;width:100%}.figma{display:table;padding-bottom:56.25%;position:relative;width:100%}.figma iframe{border:1px solid #eee;bottom:0;height:100%;left:0;position:absolute;right:0;top:0;width:100%}.markmap-container{height:300px}.markmap-container>svg{height:100%;width:100%}.MJX_Assistive_MathML{display:none}#MathJax_Message{z-index:1000!important}.ui-infobar{color:#777;margin:25px auto -25px;max-width:760px;position:relative;z-index:2}.toc .invisable-node{list-style-type:none}.ui-toc{bottom:20px;position:fixed;z-index:998}.ui-toc.both-mode{margin-left:8px}.ui-toc.both-mode .ui-toc-label{border-bottom-left-radius:0;border-top-left-radius:0;height:40px;padding:10px 4px}.ui-toc-label{background-color:#e6e6e6;border:none;color:#868686;transition:opacity .2s}.ui-toc .open .ui-toc-label{color:#fff;opacity:1;transition:opacity .2s}.ui-toc-label:focus{background-color:#ccc;color:#000;opacity:.3}.ui-toc-label:hover{background-color:#ccc;opacity:1;transition:opacity .2s}.ui-toc-dropdown{margin-bottom:20px;margin-top:20px;max-height:70vh;max-width:45vw;overflow:auto;padding-left:10px;padding-right:10px;text-align:inherit;width:25vw}.ui-toc-dropdown>.toc{max-height:calc(70vh - 100px);overflow:auto}.ui-toc-dropdown[dir=rtl] .nav{letter-spacing:.0029em;padding-right:0}.ui-toc-dropdown a{overflow:hidden;text-overflow:ellipsis;white-space:pre}.ui-toc-dropdown .nav>li>a{color:#767676;display:block;font-size:13px;font-weight:500;padding:4px 20px}.ui-toc-dropdown .nav>li:first-child:last-child>ul,.ui-toc-dropdown .toc.expand ul{display:block}.ui-toc-dropdown .nav>li>a:focus,.ui-toc-dropdown .nav>li>a:hover{background-color:initial;border-left:1px solid #000;color:#000;padding-left:19px;text-decoration:none}.ui-toc-dropdown[dir=rtl] .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav>li>a:hover{border-left:none;border-right:1px solid #000;padding-right:19px}.ui-toc-dropdown .nav>.active:focus>a,.ui-toc-dropdown .nav>.active:hover>a,.ui-toc-dropdown .nav>.active>a{background-color:initial;border-left:2px solid #000;color:#000;font-weight:700;padding-left:18px}.ui-toc-dropdown[dir=rtl] .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav>.active>a{border-left:none;border-right:2px solid #000;padding-right:18px}.ui-toc-dropdown .nav .nav{display:none;padding-bottom:10px}.ui-toc-dropdown .nav>.active>ul{display:block}.ui-toc-dropdown .nav .nav>li>a{font-size:12px;font-weight:400;padding-bottom:1px;padding-left:30px;padding-top:1px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a{padding-right:30px}.ui-toc-dropdown .nav .nav>li>ul>li>a{font-size:12px;font-weight:400;padding-bottom:1px;padding-left:40px;padding-top:1px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a{padding-right:40px}.ui-toc-dropdown .nav .nav>li>a:focus,.ui-toc-dropdown .nav .nav>li>a:hover{padding-left:29px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:hover{padding-right:29px}.ui-toc-dropdown .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown .nav .nav>li>ul>li>a:hover{padding-left:39px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:hover{padding-right:39px}.ui-toc-dropdown .nav .nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>a{font-weight:500;padding-left:28px}.ui-toc-dropdown[dir=rtl] .nav .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>a{padding-right:28px}.ui-toc-dropdown .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active>a{font-weight:500;padding-left:38px}.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active>a{padding-right:38px}.markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang^=ja] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang=zh-tw] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang=zh-cn] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html .markdown-body[lang^=ja]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html .markdown-body[lang=zh-tw]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html .markdown-body[lang=zh-cn]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol}html[lang^=ja] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ Ｐゴシック,sans-serif}html[lang=zh-tw] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html[lang=zh-cn] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}html .ui-toc-dropdown[lang^=ja]{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ Ｐゴシック,sans-serif}html .ui-toc-dropdown[lang=zh-tw]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html .ui-toc-dropdown[lang=zh-cn]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}.ui-affix-toc{max-height:70vh;max-width:15vw;overflow:auto;position:fixed;top:0}.back-to-top,.expand-toggle,.go-to-bottom{color:#999;display:block;font-size:12px;font-weight:500;margin-left:10px;margin-top:10px;padding:4px 10px}.back-to-top:focus,.back-to-top:hover,.expand-toggle:focus,.expand-toggle:hover,.go-to-bottom:focus,.go-to-bottom:hover{color:#563d7c;text-decoration:none}.back-to-top,.go-to-bottom{margin-top:0}.ui-user-icon{background-position:50%;background-repeat:no-repeat;background-size:cover;border-radius:50%;display:block;height:20px;margin-bottom:2px;margin-right:5px;margin-top:2px;width:20px}.ui-user-icon.small{display:inline-block;height:18px;margin:0 0 .2em;vertical-align:middle;width:18px}.ui-infobar>small>span{line-height:22px}.ui-infobar>small .dropdown{display:inline-block}.ui-infobar>small .dropdown a:focus,.ui-infobar>small .dropdown a:hover{text-decoration:none}.ui-more-info{color:#888;cursor:pointer;vertical-align:middle}.ui-more-info .fa{font-size:16px}.ui-connectedGithub,.ui-published-note{color:#888}.ui-connectedGithub{line-height:23px;white-space:nowrap}.ui-connectedGithub a.file-path{color:#888;padding-left:22px;text-decoration:none}.ui-connectedGithub a.file-path:active,.ui-connectedGithub a.file-path:hover{color:#888;text-decoration:underline}.ui-connectedGithub .fa{font-size:20px}.ui-published-note .fa{font-size:20px;vertical-align:top}.unselectable{-webkit-user-select:none;-o-user-select:none;user-select:none}.selectable{-webkit-user-select:text;-o-user-select:text;user-select:text}.inline-spoiler-section{cursor:pointer}.inline-spoiler-section .spoiler-text{background-color:#333;border-radius:2px}.inline-spoiler-section .spoiler-text>*{opacity:0}.inline-spoiler-section .spoiler-img{filter:blur(10px)}.inline-spoiler-section.raw{background-color:#333;border-radius:2px}.inline-spoiler-section.raw>*{opacity:0}.inline-spoiler-section.unveil{cursor:auto}.inline-spoiler-section.unveil .spoiler-text{background-color:#3333331a}.inline-spoiler-section.unveil .spoiler-text>*{opacity:1}.inline-spoiler-section.unveil .spoiler-img{filter:none}@media print{blockquote,div,img,pre,table{page-break-inside:avoid!important}a[href]:after{font-size:12px!important}}.markdown-body.slides{color:#222;position:relative;z-index:1}.markdown-body.slides:before{background-color:currentColor;bottom:0;box-shadow:0 0 0 50vw;content:"";display:block;left:0;position:absolute;right:0;top:0;z-index:-1}.markdown-body.slides section[data-markdown]{background-color:#fff;margin-bottom:1.5em;position:relative;text-align:center}.markdown-body.slides section[data-markdown] code{text-align:left}.markdown-body.slides section[data-markdown]:before{content:"";display:block;padding-bottom:56.23%}.markdown-body.slides section[data-markdown]>div:first-child{left:1em;max-height:100%;overflow:hidden;position:absolute;right:1em;top:50%;transform:translateY(-50%)}.markdown-body.slides section[data-markdown]>ul{display:inline-block}.markdown-body.slides>section>section+section:after{border:3px solid #777;content:"";height:1.5em;position:absolute;right:1em;top:-1.5em}.site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif}html[lang=zh-tw] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}body{font-smoothing:subpixel-antialiased!important;-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;-webkit-overflow-scrolling:touch;font-family:Source Sans Pro,Helvetica,Arial,sans-serif;letter-spacing:.025em}html[lang^=ja] body{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ ゴシック,sans-serif}html[lang=zh-tw] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}abbr[data-original-title],abbr[title]{cursor:help}body.modal-open{overflow-y:auto;padding-right:0!important}svg{text-shadow:none}
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="doc" class="markdown-body container-fluid comment-inner comment-enabled" data-hard-breaks="true"><h1 id="EVM-Circuit" data-id="EVM-Circuit"><a class="anchor hidden-xs" href="#EVM-Circuit" title="EVM-Circuit"><span class="octicon octicon-link"></span></a><span>EVM Circuit</span></h1><p><span>code: </span><a href="https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/evm_circuit.rs" target="_blank" rel="noopener"><span>https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/evm_circuit.rs</span></a><span> </span><code>develop</code><span> branch.</span></p><h2 id="Purpose-and-Design" data-id="Purpose-and-Design"><a class="anchor hidden-xs" href="#Purpose-and-Design" title="Purpose-and-Design"><span class="octicon octicon-link"></span></a><span>Purpose and Design</span></h2><p><span>The </span><a href="https://ethereum.org/en/developers/docs/evm/" target="_blank" rel="noopener"><span>Ethereum Virtual Machine</span></a><span> (EVM) is a state machine that defines the rules of valid state transition in the Ethereum protocol. This means that it specifies a deterministic function under which the next valid EVM state is computed from the current EVM state. The execution part of EVM uses </span><a href="https://www.evm.codes/?fork=shanghai" target="_blank" rel="noopener"><span>opcodes</span></a><span> to realize these state transitions, which results in an </span><i><span>Exection trace</span></i><span>.</span></p><p><img src="https://hackmd.io/_uploads/SJyjmfR_3.png" alt="EVMExecutionTrace-Circuit" width="60%" loading="lazy"></p><p><span>The execution trace consists of each step of execution defined by the opcode. EVM Circuit aims at constructing a constraint system corresponding to this execution trace, that can be proved by some backend zk-proof system such as Halo2.</span></p><p><span>The high-level design idea of EVM Circuit is </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">somewhat</span></span></span><span> reminiscent of the design of EVM itself (such as </span><a href="https://geth.ethereum.org/" target="_blank" rel="noopener"><span>go-ethereum</span></a><span>). In go-ethereum, an </span><code>Intepreter</code><span> loops over all instruction opcodes along the execution trace. At each instruction, the </span><code>Intepreter</code><span> helps to check relevant context information such as gas, stack, memory etc., and then sends the opcode to a </span><code>JumpTable</code><span> from which it fetches detailed </span><code>operation</code><span> that this opcode should do.</span></p><p><span>Analogously, in EVM Circuit, we build </span><i><span>execution steps</span></i><span> according to the steps in the execution trace,</span><span class="ui-comment-inline-span"> </span><span>with witnesses for both the opcode and the execution context. For each execution step, a set of constraints is imposed to check context information. For each opcode, a set of constraints is imposed to check the opcode’s behavior. Within an execution trace, the same opcode should have the same constraints. </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">We use a selector to “turn on” all steps for the same opcode within a trace and we prove their behavior using our backend proof system.</span></span></span><span> This is possible thanks to how our backend proof system (Halo2) works. The overall proof is obtained by applying this scheme to the list of all opcodes that appear in the execution trace.</span></p><h2 id="Architecture" data-id="Architecture"><a class="anchor hidden-xs" href="#Architecture" title="Architecture"><span class="octicon octicon-link"></span></a><span>Architecture</span></h2><p><span>We decompose the execution trace into execution steps and impose constraints for each step/step state transition. A </span><code>Step</code><span> contains two parts: </span><code>StepState</code><span> carries the execution step and its context information; and </span><code>CellManager</code><span> helps to fill the step’s information as witnesses into the circuit’s cells. An API layer </span><code>ConstraintBuilder</code><span> is built upon the backend proof system (Halo2) to impose constraints. The oveall architecture looks as follows:</span></p><pre><code class="mermaid hljs"><span class="mermaid raw" data-raw="stateDiagram%0A%20%20%20%20Step%20--%26gt%3B%20StepState%20%0A%20%20%20%20Step%20--%26gt%3B%20CellManager%0A%20%20%20%20ConstraintBuilder%20--%26gt%3B%20CellManager%0A%20%20%20%20CellManager%20--%26gt%3B%20ProofSystem%28Halo2%29%0A%20%20%20%20StepState%20--%26gt%3B%20ExecutionState%0A%20%20%20%20StepState%20--%26gt%3B%20step_context%0A%20%20%20%20ExecutionState%20--%26gt%3B%20ConstraintBuilder%0A%20%20%20%20step_context%20--%26gt%3B%20ConstraintBuilder%0A">stateDiagram
+    Step --&gt; StepState 
+    Step --&gt; CellManager
+    ConstraintBuilder --&gt; CellManager
+    CellManager --&gt; ProofSystem(Halo2)
+    StepState --&gt; ExecutionState
+    StepState --&gt; step_context
+    ExecutionState --&gt; ConstraintBuilder
+    step_context --&gt; ConstraintBuilder
+</span></code></pre><h3 id="Step-and-StepState" data-id="Step-and-StepState"><a class="anchor hidden-xs" href="#Step-and-StepState" title="Step-and-StepState"><span class="octicon octicon-link"></span></a><span>Step and StepState</span></h3><p><span>A </span><code>Step</code><span> consists of the </span><code>StepState</code><span> and </span><code>CellManager</code><span>. We characterize each execution by its </span><code>StepState</code><span> consisting of the following components:</span></p><pre><div class="markmap-container"><svg class="mm-34zgq4-1" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><style>.mm-34zgq4-1 { line-height: 1; }
+.mm-34zgq4-1 a { color: #0097e6; }
+.mm-34zgq4-1 a:hover { color: #00a8ff; }
+.mm-34zgq4-1-g &gt; path { fill: none; }
+.mm-34zgq4-1-g &gt; g &gt; circle { cursor: pointer; }
+.mm-34zgq4-1-fo &gt; div { display: inline-block; font: 300 16px/20px sans-serif; white-space: nowrap; }
+.mm-34zgq4-1-fo code { font-size: calc(1em - 2px); color: #555; background-color: #f0f0f0; border-radius: 2px; }
+.mm-34zgq4-1-fo :not(pre) &gt; code { padding: .2em .4em; }
+.mm-34zgq4-1-fo del { text-decoration: line-through; }
+.mm-34zgq4-1-fo em { font-style: italic; }
+.mm-34zgq4-1-fo strong { font-weight: bolder; }
+.mm-34zgq4-1-fo pre { margin: 0; padding: .2em .4em; }
+
+</style><g class="mm-34zgq4-1-g"><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><path d="M131,10C131,10,131,10,131,10"></path><g transform="translate(100,-10)"><rect x="31" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="15" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">...</div></foreignObject></g><g transform="translate(35,-10)"><rect x="96" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="80" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">ErrorStack</div></foreignObject></g><g transform="translate(-30,-10)"><rect x="161" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="145" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">ErrorInvalidOpcode</div></foreignObject></g><g transform="translate(100,-10)"><rect x="31" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="15" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">...</div></foreignObject></g><g transform="translate(36,-10)"><rect x="95" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="79" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">ADD_SUB</div></foreignObject></g><g transform="translate(70,-10)"><rect x="61" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="45" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">STOP</div></foreignObject></g><g transform="translate(44,-10)"><rect x="87" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="71" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">EndBlock</div></foreignObject></g><g transform="translate(67,-10)"><rect x="64" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="48" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">EndTx</div></foreignObject></g><g transform="translate(53,-10)"><rect x="78" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="62" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">BeginTx</div></foreignObject></g><g transform="translate(70,-10)"><rect x="61" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="45" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">log_id</div></foreignObject></g><g transform="translate(-68,-10)"><rect x="199" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="183" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">reversible_write_counter</div></foreignObject></g><g transform="translate(-30,-10)"><rect x="161" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="145" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">memory_word_size</div></foreignObject></g><g transform="translate(56,-10)"><rect x="75" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="59" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">gas_left</div></foreignObject></g><g transform="translate(15,-10)"><rect x="116" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="100" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">stack_pointer</div></foreignObject></g><g transform="translate(-13,-10)"><rect x="144" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="128" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">program_counter</div></foreignObject></g><g transform="translate(33,-10)"><rect x="98" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="82" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">code_hash</div></foreignObject></g><g transform="translate(10,-10)"><rect x="121" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="105" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">block_number</div></foreignObject></g><g transform="translate(46,-10)"><rect x="85" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="69" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">is_create</div></foreignObject></g><g transform="translate(64,-10)"><rect x="67" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="51" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">is_root</div></foreignObject></g><g transform="translate(79,-10)"><rect x="52" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="36" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">tx_id</div></foreignObject></g><g transform="translate(67,-10)"><rect x="64" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="48" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">call_id</div></foreignObject></g><g transform="translate(32,-10)"><rect x="99" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="83" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">rw_counter</div></foreignObject></g><g transform="translate(30,-10)"><rect x="101" y="19.25" width="0" height="1.5"></rect><circle stroke-width="1.5" cx="101" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="85" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">ErrorCases</div></foreignObject></g><g transform="translate(-72,-10)"><rect x="203" y="19.25" width="0" height="1.5"></rect><circle stroke-width="1.5" cx="203" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="187" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">OpcodeSuccessfulStates</div></foreignObject></g><g transform="translate(19,-10)"><rect x="112" y="19.25" width="0" height="1.5"></rect><circle stroke-width="1.5" cx="112" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="96" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">InternalState</div></foreignObject></g><g transform="translate(20,-10)"><rect x="111" y="19.25" width="0" height="1.5"></rect><circle stroke-width="1.5" cx="111" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="95" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">step_context</div></foreignObject></g><g transform="translate(-3,-10)"><rect x="134" y="19.25" width="0" height="1.5"></rect><circle stroke-width="1.5" cx="134" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="118" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">execution_state</div></foreignObject></g><g transform="translate(20,-10)"><rect x="111" y="19" width="0" height="2"></rect><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="95" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">CellManager</div></foreignObject></g><g transform="translate(41,-10)"><rect x="90" y="19" width="0" height="2"></rect><circle stroke-width="1.5" cx="90" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="74" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">StepState</div></foreignObject></g><g transform="translate(80,-10)"><rect x="51" y="18" width="0" height="4"></rect><circle stroke-width="1.5" cx="51" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-1-fo" x="8" y="0" height="20" width="35" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">Step</div></foreignObject></g></g></svg></div></pre><h3 id="ConstraintBuilder" data-id="ConstraintBuilder"><a class="anchor hidden-xs" href="#ConstraintBuilder" title="ConstraintBuilder"><span class="octicon octicon-link"></span></a><span>ConstraintBuilder</span></h3><p><span>An API layer </span><code>constraint_builder</code><span> is developed on top of the backend proof system to build constraint expressions for each execution step/step state transition, including custom gates and plookups:</span></p><pre><div class="markmap-container"><svg class="mm-34zgq4-2" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><style>.mm-34zgq4-2 { line-height: 1; }
+.mm-34zgq4-2 a { color: #0097e6; }
+.mm-34zgq4-2 a:hover { color: #00a8ff; }
+.mm-34zgq4-2-g &gt; path { fill: none; }
+.mm-34zgq4-2-g &gt; g &gt; circle { cursor: pointer; }
+.mm-34zgq4-2-fo &gt; div { display: inline-block; font: 300 16px/20px sans-serif; white-space: nowrap; }
+.mm-34zgq4-2-fo code { font-size: calc(1em - 2px); color: #555; background-color: #f0f0f0; border-radius: 2px; }
+.mm-34zgq4-2-fo :not(pre) &gt; code { padding: .2em .4em; }
+.mm-34zgq4-2-fo del { text-decoration: line-through; }
+.mm-34zgq4-2-fo em { font-style: italic; }
+.mm-34zgq4-2-fo strong { font-weight: bolder; }
+.mm-34zgq4-2-fo pre { margin: 0; padding: .2em .4em; }
+
+</style><g class="mm-34zgq4-2-g"><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><path d="M225,10C225,10,225,10,225,10"></path><g transform="translate(32,-10)"><rect x="193" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="177" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">not last step constraints</div></foreignObject></g><g transform="translate(60,-10)"><rect x="165" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="149" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">last step constraints</div></foreignObject></g><g transform="translate(59,-10)"><rect x="166" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="150" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">first step constraints</div></foreignObject></g><g transform="translate(57,-10)"><rect x="168" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="152" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">curr step constraints</div></foreignObject></g><g transform="translate(93,-10)"><rect x="132" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="116" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">curr step height</div></foreignObject></g><g transform="translate(68,-10)"><rect x="157" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="141" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">stored expressions</div></foreignObject></g><g transform="translate(127,-10)"><rect x="98" y="19.25" width="0" height="1.5"></rect><circle stroke-width="1.5" cx="98" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="82" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">constraints</div></foreignObject></g><g transform="translate(194,-10)"><rect x="31" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="15" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">...</div></foreignObject></g><g transform="translate(132,-10)"><rect x="93" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="77" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">rw_lookup</div></foreignObject></g><g transform="translate(74,-10)"><rect x="151" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="135" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">tx_context_lookup</div></foreignObject></g><g transform="translate(82,-10)"><rect x="143" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="127" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">bytecode_lookup</div></foreignObject></g><g transform="translate(95,-10)"><rect x="130" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="114" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">opcode_lookup</div></foreignObject></g><g transform="translate(107,-10)"><rect x="118" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="102" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">range_lookup</div></foreignObject></g><g transform="translate(194,-10)"><rect x="31" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="15" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">...</div></foreignObject></g><g transform="translate(102,-10)"><rect x="123" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="107" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">require_in_set</div></foreignObject></g><g transform="translate(114,-10)"><rect x="111" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="95" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">require_zero</div></foreignObject></g><g transform="translate(106,-10)"><rect x="119" y="19.25" width="0" height="1.5"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="103" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">require_equal</div></foreignObject></g><g transform="translate(173,-10)"><rect x="52" y="19" width="0" height="2"></rect><circle stroke-width="1.5" cx="52" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="36" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">build</div></foreignObject></g><g transform="translate(-170,-10)"><rect x="395" y="19" width="0" height="2"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="379" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">store_expression (store those splitted expressions)</div></foreignObject></g><g transform="translate(-262,-10)"><rect x="487" y="19" width="0" height="2"></rect><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="471" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">split_expression (used to split high degree expression to deg 2)</div></foreignObject></g><g transform="translate(122,-10)"><rect x="103" y="19" width="0" height="2"></rect><circle stroke-width="1.5" cx="103" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="87" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">add_lookup</div></foreignObject></g><g transform="translate(99,-10)"><rect x="126" y="19" width="0" height="2"></rect><circle stroke-width="1.5" cx="126" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="110" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">add_constraint</div></foreignObject></g><g transform="translate(80,-10)"><rect x="145" y="18" width="0" height="4"></rect><circle stroke-width="1.5" cx="145" cy="20" r="0"></circle><foreignObject class="mm-34zgq4-2-fo" x="8" y="0" height="20" width="129" style="opacity: 0;"><div xmlns="http://www.w3.org/1999/xhtml">ConstraintBuilder</div></foreignObject></g></g></svg></div></pre><h3 id="CellManager" data-id="CellManager"><a class="anchor hidden-xs" href="#CellManager" title="CellManager"><span class="octicon octicon-link"></span></a><span>CellManager</span></h3><p><span>The backend proof system is based on Halo2, so all constraints are implemented as Halo2 custom gates and plookups. We use </span><code>CellManager</code><span> to configure geometric layout of Halo2 cells that settle our constraints within an execution step.</span></p><h4 id="CellTypes" data-id="CellTypes"><a class="anchor hidden-xs" href="#CellTypes" title="CellTypes"><span class="octicon octicon-link"></span></a><span>CellTypes</span></h4><p><code>Challenge</code><span> API is a feature of Halo2 that can produce SNARK’s random challenges based on different phases of the proof in the transcript. In alignment with the </span><code>Challenge</code><span> API, EVM Circuit classifies its cells based on different phases of the proof. This results in </span><code>CellType</code><span>, which currently contains </span><code>StoragePhase1</code><span>, </span><code>StoragePhase2</code><span>, </span><code>StoragePermutation</code><span> and </span><code>Lookup</code><span> for different types of lookup tables, etc. . A given column in EVM Circuit will consist of cells with the same </span><code>CellType</code><span>. Columns under a given </span><code>CellType</code><span> will be horizontally layouted in a consecutive way to occupy a region. Cells that are of the same </span><code>CellType</code><span> will be subject to the same random challenge produced by </span><code>Challenge</code><span> API when Random Linear Combination (RLC) is applied to them.</span></p><h4 id="Behavior-of-CellManager-within-columns-of-the-same-CellType" data-id="Behavior-of-CellManager-within-columns-of-the-same-CellType"><a class="anchor hidden-xs" href="#Behavior-of-CellManager-within-columns-of-the-same-CellType" title="Behavior-of-CellManager-within-columns-of-the-same-CellType"><span class="octicon octicon-link"></span></a><span>Behavior of CellManager within columns of the same CellType</span></h4><p><span>When inserting a new cell into a region consisting of columns that are restricted to a specific </span><code>CellType</code><span>, say </span><code>CellType::Lookup</code><span> cells that are for one particular lookup table, </span><code>CellManager</code><span> always </span><span class="ui-comment-inline-span">adds the new cell</span><span> to the column with the shortest current height of inserted cells (columns that do not have inserted cells have height 0). If there are multiple cells to be inserted, we just iterate the above behavior. So this induces a “row by row” queries of cells, see figure below:</span></p><p><img src="https://hackmd.io/_uploads/SyQ7TP1F2.png" alt="CellManagerBehaviorSameCellType" loading="lazy"></p><h4 id="Behavior-of-CellManager-across-columns-of-different-CellTypes" data-id="Behavior-of-CellManager-across-columns-of-different-CellTypes"><a class="anchor hidden-xs" href="#Behavior-of-CellManager-across-columns-of-different-CellTypes" title="Behavior-of-CellManager-across-columns-of-different-CellTypes"><span class="octicon octicon-link"></span></a><span>Behavior of CellManager across columns of different CellTypes</span></h4><p><span>When different regions with different </span><code>CellType</code><span> </span><span class="ui-comment-inline-span">ha</span><span>ve inserted cells that occupy different </span><span class="ui-comment-inline-span">height</span><span>s, </span><code>CellManager</code><span> results in the figure below:</span></p><p><img src="https://hackmd.io/_uploads/BkeNAP1th.png" alt="CellManagerBehaviorAcrossCellTypes" loading="lazy"></p><h3 id="ExecutionGadget" data-id="ExecutionGadget"><a class="anchor hidden-xs" href="#ExecutionGadget" title="ExecutionGadget"><span class="octicon octicon-link"></span></a><span>ExecutionGadget</span></h3><p><code>ExecutionGadget</code><span> is a trait that will be implemented for each execution step that corresponds to an opcode. We often combine several opcodes with similar functionality into one </span><code>ExecutionGadget</code><span>. </span><code>ExecutionGadget</code><span> contains two methods:</span></p><ul>
+<li><code>configure</code><span>, </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">which is to set</span></span><span> constraints for this execution step;</span></li>
+<li><code>assign_exec_step</code><span>, which is used to fill in witness values into the circuit.</span></li>
+</ul><h2 id="Circuit-Layout" data-id="Circuit-Layout"><a class="anchor hidden-xs" href="#Circuit-Layout" title="Circuit-Layout"><span class="octicon octicon-link"></span></a><span>Circuit Layout</span></h2><p><span>At each step, we enable 3 selector column</span><span class="ui-comment-inline-span">s</span><span>:</span></p><ul>
+<li><code>q_usable</code><span>, if this step is a step that is actually used in execution;</span></li>
+<li><code>q_step_first</code><span>, if this step is the first execution step;</span></li>
+<li><code>q_step_last</code><span>, if this step is the last execution step.</span></li>
+</ul><p><span>Then we enable an advice colum</span><span class="ui-comment-inline-span">n</span><span>:</span></p><ul>
+<li><code>q_step</code><span>,  the dynamic selector for the start of this execution step since the witnesses of each execution step may occupy variable height in the circuit layout.</span></li>
+</ul><p><span>A few extra columns are enabled for various purposes, includin</span><span class="ui-comment-inline-span">g</span><span>:</span></p><ul>
+<li><code>constants</code><span>, a fixed column, hold constant values used for copy constraints</span></li>
+<li><code>num_rows_until_next_step</code><span>, an advice column,</span><span class="ui-comment-inline-span"> </span><span>count the number of rows until next step</span></li>
+<li><code>num_rows_inv</code><span>, an advice column, for a</span><span class="ui-comment-inline-span"> </span><span>constraint that enforc</span><span class="ui-comment-inline-span">e</span><span>s </span><code>q_step:= num_rows_until_next_step == 0</code></li>
+</ul><p><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">In alignment with the </span></span><code>Challenge</code><span class="ui-comment-inline-span"><span class="ui-comment-inline-span"> API of Halo2, we classify all above columns as in phase 1 columns using Halo2’s phase convention.</span></span></p><p><span>After that, a rectangular region of advice columns is arranged for the execution step specific constraints </span><span class="ui-comment-inline-span">that corresponds</span><span> to an </span><code>ExecutionGadget</code><span>. The width of this region is set to be a constant </span><code>STEP_WIDTH</code><span>. The step height is not fixed, so it is dynamic. This part is handled by </span><code>CellManager</code><span>.</span></p><p><span>For each step, </span><code>CellManager</code><span> allocates an area of advice columns with</span><span class="ui-comment-inline-span"> </span><span>a given height and</span><span class="ui-comment-inline-span"> </span><span>the number of advice columns as</span><span class="ui-comment-inline-span"> </span><span>its width. The allocation process is in alignment with </span><code>Challenge</code><span> API. So within the area</span><span class="ui-comment-inline-span"> allocated to advice columns</span><span>, </span><code>CellManager</code><span> marks columns in consecutive regions from left to right as</span></p><ul>
+<li><code>CellType::Lookup(Table)</code><span>: used for lookups. The type of lookups used inside evm-circuit are configured in </span><code>LOOKUP_CONFIG</code><span>, </span><span class="ui-comment-inline-span">currently containing</span>
+<ul>
+<li><code>Fixed</code><span class="ui-comment-inline-span"> (corresponding to the fixed table),</span></li>
+<li><code>Tx</code><span class="ui-comment-inline-span"> (corresponding to the tx table),</span></li>
+<li><code>Rw</code><span class="ui-comment-inline-span"> (corresponding to the read-write table),</span></li>
+<li><code>Bytecode</code><span class="ui-comment-inline-span"> (corresponding to the bytecode table),</span></li>
+<li><code>Block</code><span class="ui-comment-inline-span"> (corresponding to the block table),</span></li>
+<li><code>Copy</code><span class="ui-comment-inline-span"> (corresponding to the copy table),</span></li>
+<li><code>Keccak</code><span class="ui-comment-inline-span"> (corresponding to the Keccak table),</span></li>
+<li><code>Exp</code><span class="ui-comment-inline-span"> (corresponding to the exp table),</span></li>
+<li><code>Sig</code><span class="ui-comment-inline-span"> (corresponding to the tx sign-verify table).</span><br>
+<span>For each type of lookup </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">cells</span></span><span>, </span><code>LOOKUP_CONFIG</code><span> sets </span><span class="ui-comment-inline-span">i</span><span>ts number of columns used inside </span><span class="ui-comment-inline-span">EVM Circuit</span><span>. </span><span class="ui-comment-inline-span">Note: the</span><span> number of columns inside </span><span class="ui-comment-inline-span">EVM Circuit</span><span> for each lookup type cells is </span><i><span>not</span></i><span> the number of columns used in the corresponding lookup table. This will be explained in detail in a later section “</span><b><span>Lookup Tables</span></b><span>”;</span></li>
+</ul>
+</li>
+<li><code>CellType::StoragePermutationPhase2</code><span>: used for copy constraints on phase 2, and number of columns </span><code>N_PHASE2_COPY_COLUMNS</code><span>;</span></li>
+<li><code>CellType::StoragePhase2</code><span>: used for phase 2 constraints, and number of columns </span><code>N_PHASE2_COLUMNS-N_PHASE2_COPY_COLUMNS</code><span>;</span></li>
+<li><code>CellType::StoragePermutation</code><span>: used for copy constraints, and number of columns </span><code>N_COPY_COLUMNS</code><span>;</span></li>
+<li><code>CellType::LookupByte</code><span>: used for byte lookup, and number of columns </span><code>N_BYTE_LOOKUPS</code><span>;</span></li>
+<li><code>CellType::StoragePhase1</code><span>: used for phase 1 constraints, all the rest columns within </span><code>STEP_WIDTH</code><span> number of all advice columns.</span></li>
+</ul><p><span>Summarizing, the overall circuit layout for one particular step looks like</span></p><p><img src="https://hackmd.io/_uploads/BJyN9Teth.png" alt="evm-circuit-layout-Step" loading="lazy"></p><p><span>An example of the evm-circuit fills in the following witnesses:</span></p><table>
+<thead>
+<tr>
+<th><code>q_usable</code></th>
+<th><code>q_step_first</code></th>
+<th><code>q_step_last</code></th>
+<th><code>q_step</code></th>
+<th><code>constants</code></th>
+<th><code>num_rows_until_next_step</code></th>
+<th><code>num_rows_inv</code></th>
+<th><span class="ui-comment-inline-span">Gadget Specific Witnesses (128 columns maximum)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td><span>…</span></td>
+<td><span>5</span></td>
+<td><span>1/5</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>4</span></td>
+<td><span>1/4</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>3</span></td>
+<td><span>1/3</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>2</span></td>
+<td><span>1/2</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>0</span></td>
+<td><span class="mathjax raw">\(\infty\)</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td><span>…</span></td>
+<td><span>6</span></td>
+<td><span>1/6</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>5</span></td>
+<td><span>1/5</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>4</span></td>
+<td><span>1/4</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>3</span></td>
+<td><span>1/3</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>2</span></td>
+<td><span>1/2</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>0</span></td>
+<td><span class="mathjax raw">\(\infty\)</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>…</span></td>
+<td><span>3</span></td>
+<td><span>1/3</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>2</span></td>
+<td><span>1/2</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>1</span></td>
+<td><span>1</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td><span>0</span></td>
+<td><span>…</span></td>
+<td><span>0</span></td>
+<td><span class="mathjax raw">\(\infty\)</span></td>
+<td><span>…</span></td>
+</tr>
+<tr>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>0</span></td>
+<td><span>padding</span></td>
+<td><span>padding</span></td>
+<td><span>padding</span></td>
+<td><span>padding</span></td>
+</tr>
+</tbody>
+</table><p><span>The constraints for opcode specific </span><code>ExecutionGadget</code><span> are classified according to the selectors corresponding to </span><code>q_step</code><span>, </span><code>q_step_first</code><span>, </span><code>q_step_last</code><span> and </span><code>not_q_step_last</code><span>. These constraints are built in </span><code>ConstraintBuilder::build</code><span>, in which each gadget’s specific constraints are multiplied by the selector for this particular execution state.</span></p><h2 id="Lookup-Tables" data-id="Lookup-Tables"><a class="anchor hidden-xs" href="#Lookup-Tables" title="Lookup-Tables"><span class="octicon octicon-link"></span></a><span>Lookup Tables</span></h2><h3 id="Logistics" data-id="Logistics"><a class="anchor hidden-xs" href="#Logistics" title="Logistics"><span class="octicon octicon-link"></span></a><span>Logistics</span></h3><p><span>During the proof of an execution step, we sometimes use lookup type arguments to verify the correctness of the </span><span class="ui-comment-inline-span">EV</span><span>M behavior generated at execution. The rationale is that if we can find a recorded item in a lookup table that is equal to the current EVM behavior </span><span class="ui-comment-inline-span">t</span><span>hat we want to constrain, we assert the latter’s correctness.</span></p><p><span>For example, when stack push/pops a stack element, we </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">lookup</span></span><span> the rw table (read-write table) for the correct stack read/write behavior. Another example is the bytecode table that we can </span><span class="ui-comment-inline-span">lookup</span><span> to verify the correctness of bytecode stored in the contract.</span></p><p><span>For the EVM Circuit, there are internal and external lookup tables. We summarize them as follows </span><span class="ui-comment-inline-span">(table columns may change due to frequent modifications to the codebase)</span><span>:</span></p><ul>
+<li><span>EVM Circuit internal lookup tables</span></li>
+</ul><table>
+<thead>
+<tr>
+<th><span>Lookup Table</span></th>
+<th><span>Columns</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>Fixed</span></td>
+<td><span>tag, value1, value2, value3</span></td>
+</tr>
+<tr>
+<td><span>Byte</span></td>
+<td><span>value</span></td>
+</tr>
+</tbody>
+</table><ul>
+<li><span>EVM Circuit external lookup tables</span></li>
+</ul><table>
+<thead>
+<tr>
+<th><span>Lookup Table</span></th>
+<th><span>Columns</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>TxTable</span></td>
+<td><span>tx_id, tag, index, value</span></td>
+</tr>
+<tr>
+<td><span>RwTable</span></td>
+<td><span>is_counter, is_write, tag, id, address, field_tag, storage_key, value, value_prev, aux1, aux2</span></td>
+</tr>
+<tr>
+<td><span>BytecodeTable</span></td>
+<td><span>code_hash, tag, index, is_code, value</span></td>
+</tr>
+<tr>
+<td><span>BlockTable</span></td>
+<td><span>tag, index, value</span></td>
+</tr>
+<tr>
+<td><span>CopyTable</span></td>
+<td><span>is_first, src_id, src_tag, dst_id, dst_tag, src_addr, src_addr_end, dst_addr, length, rlc_acc, rw_counter, rw_inc</span></td>
+</tr>
+<tr>
+<td><span>KeccakTable</span></td>
+<td><span>is_enabled (=1), input_rlc, input_len, output_rlc</span></td>
+</tr>
+<tr>
+<td><span>ExpTable</span></td>
+<td><span>is_step (=1), identifier, is_last, base_limbs[0], base_limbs[1], base_limbs[2], base_limbs[3], exp_lo_hi[0], exp_lo_hi[1], exponentiation_lo_hi[0],  exponentiation_lo_hi[1]</span></td>
+</tr>
+<tr>
+<td><span>SigTable</span></td>
+<td><span>msg_hash_rlc, sig_v, sig_r_rlc, sig_s_rlc, recovered_addr, is_valid</span></td>
+</tr>
+</tbody>
+</table><h3 id="How-lookups-are-configured-in-EVM-Circuit’s-layout" data-id="How-lookups-are-configured-in-EVM-Circuit’s-layout"><a class="anchor hidden-xs" href="#How-lookups-are-configured-in-EVM-Circuit’s-layout" title="How-lookups-are-configured-in-EVM-Circuit’s-layout"><span class="octicon octicon-link"></span></a><span>How lookups are configured in EVM Circuit’s layout</span></h3><h4 id="Lookup-into-the-table" data-id="Lookup-into-the-table"><a class="anchor hidden-xs" href="#Lookup-into-the-table" title="Lookup-into-the-table"><span class="octicon octicon-link"></span></a><span>Lookup into the table</span></h4><p><span>We use </span><code>Lookup::input_exprs</code><span>  method to extract input expressions </span><span class="ui-comment-inline-span">from an EVM execution trace</span><span> that we want </span><span class="ui-comment-inline-span">to do lookup</span><span>, and we use </span><code>LookupTable::table_exprs</code><span> method to extract table expressions from a recorded lookup table. The lookup argument aims at proving the former expression lies in the latter ones. This is done by first </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">RLC</span></span><span> (Random Linear Combine) both sides of expressions using the same random challenge and then lookup the RLC expression. Here each column of a lookup table corresponds to one lookup expression, and EVM Step’s lookup input expressions must correspond to the table expressions. See the following illustration:</span></p><p><img src="https://hackmd.io/_uploads/rynmiTWF2.png" alt="evm-circuit-lookup" loading="lazy"></p><p><span>At</span><span class="ui-comment-inline-span"> </span><span>the execution level, the input expression RLCs enter EVM Circuit’s lookup cell, and the RLCs with the same random challenge are done for the corresponding table expressions. The </span><code>ExecutionConfig</code><span>’s </span><code>config_lookup</code><span> method configures the lookup between the input expression RLCs and the table expression RLCs.</span></p><h4 id="Lookup-Cells-in-EVM-Circuit" data-id="Lookup-Cells-in-EVM-Circuit"><a class="anchor hidden-xs" href="#Lookup-Cells-in-EVM-Circuit" title="Lookup-Cells-in-EVM-Circuit"><span class="octicon octicon-link"></span></a><span>Lookup Cells in EVM Circuit</span></h4><p><span>At each step, </span><code>CellManager</code><span> allocates a region with columns consisting of </span><code>CellType::Lookup(table)</code><span> that are for various types of lookups. Cells in these columns are filled with</span><span class="ui-comment-inline-span"> </span><span>the RLC result of input expressions induced by the execution trace. This is done by the </span><code>add_lookup</code><span> method in </span><code>ConstraintBuilder</code><span>.</span></p><p><span>The number of columns allocated for one type of lookup </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">(corresponding lookup will be into a particular lookup table)</span></span><span> follows the configuration setting in </span><code>LOOKUP_CONFIG</code><span>. These numbers are tunable in order to make the circuit more “compact”, i.e., with less unused cells, so that performance can be improved.</span></p><h4 id="Challenge-used-for-EVM-Circuit’s-lookup-cells" data-id="Challenge-used-for-EVM-Circuit’s-lookup-cells"><a class="anchor hidden-xs" href="#Challenge-used-for-EVM-Circuit’s-lookup-cells" title="Challenge-used-for-EVM-Circuit’s-lookup-cells"><span class="octicon octicon-link"></span></a><span>Challenge used for EVM Circuit’s lookup cells</span></h4><p><span>The random challenge used to obtain</span><span class="ui-comment-inline-span"> </span><span>the RLC result of lookup’s input expressions is given by </span><code>lookup_input</code><span>, which is obtained from </span><code>meta.challenge_usable_after(SecondPhase)</code><span>. </span><span class="ui-comment-inline-span">So </span><span>this random number is generated by the proof transcript </span><span class="ui-comment-inline-span"><span class="ui-comment-inline-span">after the second phase (i.e. phase 3)</span></span><span>. Notice that the input expressions (or table expressions) themselves can be RLC results. For example, Keccak table has columns of </span><code>input_rlc</code><span> and </span><code>output_rlc</code><span>. These RLC results are obtained using random challenges obtained in previous phases (such as phase 1 and phase 2). Therefore, the overall RLC results filled in an EVM Circuit’s lookup cell </span><span class="ui-comment-inline-span">may be </span><span>the result of nested RLCs.</span></p><h2 id="Constraints" data-id="Constraints"><a class="anchor hidden-xs" href="#Constraints" title="Constraints"><span class="octicon octicon-link"></span></a><span class="ui-comment-inline-span">Constraints</span></h2><p><span>Due to page limit we only discuss some examples here.</span></p><h3 id="General-Constraints" data-id="General-Constraints"><a class="anchor hidden-xs" href="#General-Constraints" title="General-Constraints"><span class="octicon octicon-link"></span></a><span>General Constraints</span></h3><h4 id="SameContextGadget" data-id="SameContextGadget"><a class="anchor hidden-xs" href="#SameContextGadget" title="SameContextGadget"><span class="octicon octicon-link"></span></a><code>SameContextGadget</code></h4><p><span>This gadget is applied to every execution step in order to check the correct transition from current state to next state. The constraints include</span></p><ul>
+<li><span>lookup to Bytecode Table and Fixed Table (with </span><code>tag=FixedTableTag::ResponsibleOpcode</code><span>) for the correctness of the current opcode;</span></li>
+<li><span>check remaining gas is sufficient;</span></li>
+<li><span>check correct step state transition, such as change of </span><code>rw_counter</code><span>, </span><code>program_counter</code><span>, </span><code>stack_pointer</code><span> etc.</span></li>
+</ul><h3 id="Opcode-Constraints" data-id="Opcode-Constraints"><a class="anchor hidden-xs" href="#Opcode-Constraints" title="Opcode-Constraints"><span class="octicon octicon-link"></span></a><span>Opcode Constraints</span></h3><h4 id="mulmod" data-id="mulmod"><a class="anchor hidden-xs" href="#mulmod" title="mulmod"><span class="octicon octicon-link"></span></a><code>mulmod</code></h4><p><span>According to the </span><a href="https://ethereum.github.io/yellowpaper/paper.pdf" target="_blank" rel="noopener"><span>ETH Yellow Paper</span></a><span>, the MULMOD opcode (modulo addition operation) pops </span><span class="mathjax raw">\(3\)</span><span> EVM words </span><span class="mathjax raw">\(\boldsymbol{\mu}_{\textbf{s}}[0], \boldsymbol{\mu}_{\textbf{s}}[1], \boldsymbol{\mu}_{\textbf{s}}[2]\)</span><span> each with 256-bit (32 byte) size from the stack and push back one EVM word </span><span class="mathjax raw">\(\boldsymbol{\mu}_{\textbf{s}}'[0]\)</span><span>.</span></p><p><span>To make our notations simpler, we denote </span><span class="mathjax raw">\(a=\boldsymbol{\mu}_{\textbf{s}}[0]\)</span><span>, </span><span class="mathjax raw">\(b=\boldsymbol{\mu}_{\textbf{s}}[1]\)</span><span> and </span><span class="mathjax raw">\(n=\boldsymbol{\mu}_{\textbf{s}}[2]\)</span><span> and </span><span class="mathjax raw">\(r=\boldsymbol{\mu}_{\textbf{s}}'[0]\)</span><span>, then the EVM behavior of MULMOD opcode can be viewed as a mapping</span><br>
+<span class="mathjax raw">\[(a, b, n)\stackrel{\text{MULMOD}}{\rightarrow}  
+r=\left\{\begin{array}{ll} 
+0 &amp; \text{ if } n=0 \ ,
+\\
+a\cdot b \mod n &amp; \text{ if } n\neq 0 \ .
+\end{array}\right.
+\]</span><br>
+<span>The intermediate calculation is the multiplication of two </span><span class="mathjax raw">\(32\)</span><span>-byte words </span><span class="mathjax raw">\(a\)</span><span> and </span><span class="mathjax raw">\(b\)</span><span>, and this operation is supposed to be </span><i><span>not</span></i><span> subject to </span><span class="mathjax raw">\(2^{256}\)</span><span> modulo.</span></p><p><span>Of course, a full characterization of the EVM behavior under MULMOD also involves the correct stack push-pop: </span><span class="mathjax raw">\(3\)</span><span> stack pops and </span><span class="mathjax raw">\(1\)</span><span> stack push, and together with a gas cost of </span><span class="mathjax raw">\(8\)</span><span>.</span></p><p><span>For the MULMOD opcode, EVM Circuit assigns </span><span class="mathjax raw">\((a, b, n, r, k, a_{\text{reduced}}, d, e)\)</span><span>, each of which is 32-byte word:</span></p><p><span class="mathjax raw">\[\begin{array}{rl}
+a &amp; =\overline{a_0a_1...a_{31}}=\sum\limits_{i=0}^{31} a_i \cdot 256^i \ ,
+\\
+b &amp; =\overline{b_0b_1...b_{31}}=\sum\limits_{i=0}^{31} b_i\cdot 256^i \ , 
+\\
+n &amp; =\overline{n_0n_1...n_{31}}=\sum\limits_{i=0}^{31} n_i\cdot 256^i \ , 
+\\
+r &amp; =\overline{r_0r_1...r_{31}}=\sum\limits_{i=0}^{31} r_i\cdot 256^i \ ,
+\\
+a_\text{reduced} &amp; =\overline{a_{r0}...a_{r31}}=\sum\limits_{i=0}^{31}a_{ri}\cdot 256^i \ ,
+\\
+d &amp; =\overline{p_0p_1...p_{31}}=\sum\limits_{i=0}^{31} p_i\cdot 256^i \ ,
+\\
+e &amp; =\overline{p_{32}p_{33}...p_{63}}=\sum\limits_{i=0}^{31} p_{32+i} \cdot 256^i \ ,
+\\
+k &amp; =\overline{k_0k_1...k_{31}}=\sum\limits_{i=0}^{31} k_i \cdot 256^i \ .
+\end{array}\]</span></p><p><span>It also assigns </span><span class="mathjax raw">\(\verb#n_sum#=n_0+...+n_{31}\)</span><span>.</span></p><p><span>Then the constraints are</span></p><ul>
+<li><span class="mathjax raw">\(a_{\text{reduced}} 
+== a\mod n \ \text{ if } n\neq 0
+\text{ and } a_{\text{reduced}} == 0 \text{ if } n=0\)</span><span> (ModGadget);</span></li>
+<li><span class="mathjax raw">\(a_{\text{reduced}}\cdot b + 0  
+== d\cdot 2^{256} + e\)</span><span> (MulAddWords512Gadget);</span></li>
+<li><span class="mathjax raw">\(k\cdot n + r == d\cdot 2^{256} + e\)</span><span> (MulAddWords512Gadget);</span></li>
+<li><span class="mathjax raw">\(1-\mathbf{1}_{\{r&lt;n\}}-\mathbf{1}_{\{\verb#n_sum#=0\}}==0\)</span><span> (IsZeroGadget, LtWordGadget);</span></li>
+<li><code>SameContextGadget</code>
+<ul>
+<li><span>opcodeID checks: opId </span><span class="mathjax raw">\(==\)</span><span> OpcodeId(0x09);</span></li>
+<li><span>state transition: rw_counter +4; stack_pointer +2; pc +1; gas - op_cost;</span></li>
+<li><span>Lookups: </span><span class="mathjax raw">\(4\)</span><span> busmapping lookups: </span><span class="mathjax raw">\(a=\boldsymbol{\mu}_{\textbf{s}}[0]\)</span><span>,</span><br>
+<span class="mathjax raw">\(b=\boldsymbol{\mu}_{\textbf{s}}[1]\)</span><span>, </span><span class="mathjax raw">\(n=\boldsymbol{\mu}_{\textbf{s}}[2]\)</span><span>,</span><br>
+<span class="mathjax raw">\(r=\boldsymbol{\mu}_{\textbf{s}}'[0]\)</span><span>;</span></li>
+<li><span>Exceptions:</span>
+<ul>
+<li>
+<ol>
+<li><span>stack undeflow: </span><span class="mathjax raw">\(1022 \leq\)</span><span> stack_pointer </span><span class="mathjax raw">\(\leq 1024\)</span><span>;</span></li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li><span>out of gas: Remaining gas is not enough.</span></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h4 id="returndatacopy" data-id="returndatacopy"><a class="anchor hidden-xs" href="#returndatacopy" title="returndatacopy"><span class="octicon octicon-link"></span></a><code>returndatacopy</code></h4><p><span>According to the </span><a href="https://ethereum.github.io/yellowpaper/paper.pdf" target="_blank" rel="noopener"><span>ETH Yellow Paper</span></a><span>, the RETURNDATACOPY opcode pops 3 stack elements </span><span class="mathjax raw">\(\boldsymbol{\mu}_{\textbf{s}}[0]\)</span><span>=</span><code>dest_offset</code><span>, </span><span class="mathjax raw">\(\boldsymbol{\mu}_{\textbf{s}}[1]\)</span><span>=</span><code>data_offset</code><span> and </span><span class="mathjax raw">\(\boldsymbol{\mu}_{\textbf{s}}[2]\)</span><span>=</span><code>size</code><span>. It copies output data from the previous call to memory. The copied output data starts from </span><code>data_offset</code><span> within return data from last call and memory copy starts from </span><code>dest_offset</code><span>, with copy data size equal to </span><code>size</code><span>. Denote by </span><span class="mathjax raw">\(\boldsymbol{\mu}'_{\textbf{m}}\)</span><span> the updated memory state and </span><span class="mathjax raw">\(\boldsymbol{\mu}_{\textbf{o}}\)</span><span> the return data from last call, then the rule is given by the following formula</span><br>
+<span class="mathjax raw">\[\forall i\in \{0... \boldsymbol{\mu}_{\textbf{s}}[2]-1\}: \boldsymbol{\mu}_{\textbf{m}}'[\boldsymbol{\mu}_{\textbf{s}}[0]+i]=\left\{
+\begin{array}{ll}
+\boldsymbol{\mu}_{\textbf{o}}[\boldsymbol{\mu}_{\textbf{s}}[1]+i] &amp; \text{ if } \boldsymbol{\mu}_{\textbf{s}}[1]+i&lt;\|\boldsymbol{\mu}_{\textbf{o}}\|
+\\
+0 &amp; \text{ otherwise .}
+\end{array}
+\right.\]</span><br>
+<span>Note that the data to be copied to memory that exceeds return data size (</span><span class="mathjax raw">\(\|\boldsymbol{\mu}_{\textbf{o}}\|\)</span><span>) will be padded by 0.</span></p><p><span>For RETURNDATACOPY opcode, EVM Circuit does the following type of constraint checks together with witness assignments:</span></p><ul>
+<li><span>Constraints for stack pop of </span><code>dest_offset</code><span>, </span><code>data_offset</code><span> and </span><code>size</code><span>. This means they are assigned from the step’s rw data (via bus mapping) and then they are checked by doing RwTable lookups with </span><code>tag=RwTableTag::Stack</code><span>, as well as verifying correct stack pointer update;</span></li>
+<li><span>Constraints for call context related data including </span><code>last_callee_id</code><span>, </span><code>return_data_offset</code><span> (offset for </span><span class="mathjax raw">\(\boldsymbol{\mu}_{\textbf{o}}\)</span><span>) and </span><code>return_data_size</code><span> (</span><span class="mathjax raw">\(\|\boldsymbol{\mu}_{\textbf{o}}\|\)</span><span>). These are assigned and then checked by RwTable lookups with </span><code>tag=RwTableTag::CallContext</code><span>. Here return data means the output data from last call, from which we fetch data that is to be copied into memory;</span></li>
+<li><span>Constraints for ensuring no out-of-bound errors happen with </span><code>return_data_size</code><span>;</span></li>
+<li><span>Constraints for memory related behavior. This includes memory address and expansion via </span><code>dest_offset</code><span> and </span><code>size</code><span>, as well as gas cost for memory expansion;</span></li>
+<li><span>Constraints for copy behavior. This is done by lookup to CopyTable with </span><code>src_id=last_callee_id</code><span> (source call id) and </span><code>dst_id=</code><span> current step call id (destination call id), and corresponding source and destination addresses determined by </span><code>return_data_offset</code><span>, </span><code>return_data_size</code><span>, </span><code>data_offset</code><span>, </span><code>dest_offset</code><span> and </span><code>size</code><span> (that computes destination memory address);</span></li>
+<li><code>SameContextGadget</code>
+<ul>
+<li><span>opcodeID checks: opId </span><span class="mathjax raw">\(==\)</span><span> OpcodeId(0x3e);</span></li>
+<li><span>state transition: rw_counter+, stack_pointer+3, pc+1, gas -(op_cost+memory expansion cost), memory expand to next memory word size.</span></li>
+</ul>
+</li>
+</ul></div>
+    <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+        <div class="pull-right dropdown">
+            <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                <div class="toc"><ul class="nav">
+<li><a href="#EVM-Circuit" title="EVM Circuit">EVM Circuit</a><ul class="nav">
+<li><a href="#Purpose-and-Design" title="Purpose and Design">Purpose and Design</a></li>
+<li><a href="#Architecture" title="Architecture">Architecture</a><ul class="nav">
+<li><a href="#Step-and-StepState" title="Step and StepState">Step and StepState</a></li>
+<li><a href="#ConstraintBuilder" title="ConstraintBuilder">ConstraintBuilder</a></li>
+<li><a href="#CellManager" title="CellManager">CellManager</a></li>
+<li><a href="#ExecutionGadget" title="ExecutionGadget">ExecutionGadget</a></li>
+</ul>
+</li>
+<li><a href="#Circuit-Layout" title="Circuit Layout">Circuit Layout</a></li>
+<li><a href="#Lookup-Tables" title="Lookup Tables">Lookup Tables</a><ul class="nav">
+<li><a href="#Logistics" title="Logistics">Logistics</a></li>
+<li><a href="#How-lookups-are-configured-in-EVM-Circuit’s-layout" title="How lookups are configured in EVM Circuit’s layout">How lookups are configured in EVM Circuit’s layout</a></li>
+</ul>
+</li>
+<li><a href="#Constraints" title="Constraints">Constraints</a><ul class="nav">
+<li><a href="#General-Constraints" title="General Constraints">General Constraints</a></li>
+<li><a href="#Opcode-Constraints" title="Opcode Constraints">Opcode Constraints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+            </ul>
+        </div>
+    </div>
+    <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;" null null>
+        <div class="toc"><ul class="nav">
+<li><a href="#EVM-Circuit" title="EVM Circuit">EVM Circuit</a><ul class="nav">
+<li><a href="#Purpose-and-Design" title="Purpose and Design">Purpose and Design</a></li>
+<li><a href="#Architecture" title="Architecture">Architecture</a><ul class="nav">
+<li><a href="#Step-and-StepState" title="Step and StepState">Step and StepState</a></li>
+<li><a href="#ConstraintBuilder" title="ConstraintBuilder">ConstraintBuilder</a></li>
+<li><a href="#CellManager" title="CellManager">CellManager</a></li>
+<li><a href="#ExecutionGadget" title="ExecutionGadget">ExecutionGadget</a></li>
+</ul>
+</li>
+<li><a href="#Circuit-Layout" title="Circuit Layout">Circuit Layout</a></li>
+<li><a href="#Lookup-Tables" title="Lookup Tables">Lookup Tables</a><ul class="nav">
+<li><a href="#Logistics" title="Logistics">Logistics</a></li>
+<li><a href="#How-lookups-are-configured-in-EVM-Circuit’s-layout" title="How lookups are configured in EVM Circuit’s layout">How lookups are configured in EVM Circuit’s layout</a></li>
+</ul>
+</li>
+<li><a href="#Constraints" title="Constraints">Constraints</a><ul class="nav">
+<li><a href="#General-Constraints" title="General Constraints">General Constraints</a></li>
+<li><a href="#Opcode-Constraints" title="Opcode Constraints">Opcode Constraints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+    <script>
+        var markdown = $(".markdown-body");
+        //smooth all hash trigger scrolling
+        function smoothHashScroll() {
+            var hashElements = $("a[href^='#']").toArray();
+            for (var i = 0; i < hashElements.length; i++) {
+                var element = hashElements[i];
+                var $element = $(element);
+                var hash = element.hash;
+                if (hash) {
+                    $element.on('click', function (e) {
+                        // store hash
+                        var hash = this.hash;
+                        if ($(hash).length <= 0) return;
+                        // prevent default anchor click behavior
+                        e.preventDefault();
+                        // animate
+                        $('body, html').stop(true, true).animate({
+                            scrollTop: $(hash).offset().top
+                        }, 100, "linear", function () {
+                            // when done, add hash to url
+                            // (default click behaviour)
+                            window.location.hash = hash;
+                        });
+                    });
+                }
+            }
+        }
+
+        smoothHashScroll();
+        var toc = $('.ui-toc');
+        var tocAffix = $('.ui-affix-toc');
+        var tocDropdown = $('.ui-toc-dropdown');
+        //toc
+        tocDropdown.click(function (e) {
+            e.stopPropagation();
+        });
+
+        var enoughForAffixToc = true;
+
+        function generateScrollspy() {
+            $(document.body).scrollspy({
+                target: ''
+            });
+            $(document.body).scrollspy('refresh');
+            if (enoughForAffixToc) {
+                toc.hide();
+                tocAffix.show();
+            } else {
+                tocAffix.hide();
+                toc.show();
+            }
+            $(document.body).scroll();
+        }
+
+        function windowResize() {
+            //toc right
+            var paddingRight = parseFloat(markdown.css('padding-right'));
+            var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+            toc.css('right', right + 'px');
+            //affix toc left
+            var newbool;
+            var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+            //for ipad or wider device
+            if (rightMargin >= 133) {
+                newbool = true;
+                var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                tocAffix.css('left', left + 'px');
+            } else {
+                newbool = false;
+            }
+            if (newbool != enoughForAffixToc) {
+                enoughForAffixToc = newbool;
+                generateScrollspy();
+            }
+        }
+        $(window).resize(function () {
+            windowResize();
+        });
+        $(document).ready(function () {
+            windowResize();
+            generateScrollspy();
+        });
+
+        //remove hash
+        function removeHash() {
+            window.location.hash = '';
+        }
+
+        var backtotop = $('.back-to-top');
+        var gotobottom = $('.go-to-bottom');
+
+        backtotop.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToTop)
+                scrollToTop();
+            removeHash();
+        });
+        gotobottom.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToBottom)
+                scrollToBottom();
+            removeHash();
+        });
+
+        var toggle = $('.expand-toggle');
+        var tocExpand = false;
+
+        checkExpandToggle();
+        toggle.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tocExpand = !tocExpand;
+            checkExpandToggle();
+        })
+
+        function checkExpandToggle () {
+            var toc = $('.ui-toc-dropdown .toc');
+            var toggle = $('.expand-toggle');
+            if (!tocExpand) {
+                toc.removeClass('expand');
+                toggle.text('Expand all');
+            } else {
+                toc.addClass('expand');
+                toggle.text('Collapse all');
+            }
+        }
+
+        function scrollToTop() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: 0
+            }, 100, "linear");
+        }
+
+        function scrollToBottom() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: $(document.body)[0].scrollHeight
+            }, 100, "linear");
+        }
+    </script>
+</body>
+
+</html>
