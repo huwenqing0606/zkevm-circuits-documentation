@@ -6,6 +6,8 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/keccak_circuit.rs `develop` branch
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/H1vMF0_u2
+
 [NIST Keccak Spec]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
 
 [Keccak Team Keccak Spec]: https://keccak.team/files/Keccak-implementation-3.2.pdf
