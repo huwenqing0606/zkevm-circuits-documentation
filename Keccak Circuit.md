@@ -152,7 +152,7 @@ $$A[i][j] \leftarrow A[i][j]\oplus \verb"chunk[idx * 64..(idx + 1) * 64]"$$ to o
 #### Squeeze
 
 At the end of the above absorb process, take $A[0][0], A[1][0], A[2][0], A[3][0]$ to form $4$ words, each word is $64$-bit. The Keccak hash output would then be the $256$-bit word
-$$A[3][0]||A[2][0]||A[1][0]||A[0][0]$$
+$$A[3][0] || A[2][0] || A[1][0] || A[0][0]$$
 
 
 ### Keccak Hash function Input and Output RLCs
@@ -164,14 +164,16 @@ We are given the Keccak original input in bytes but without the padding bytes in
 ```
 Then RLC using Keccak input $\verb"challenge"$ (which is after `FirstPhase`) to obtain
 
-$$\verb"input_rlc"=\verb"bytes"_{n-1}+\verb"bytes"_{n-2}*\verb"challenge"+...+\verb"bytes"_0 * \verb"challenge"^{n-1} \ .$$
+```math
+\verb"input_rlc"=\verb"bytes"_{n-1}+\verb"bytes"_{n-2}*\verb"challenge"+...+\verb"bytes"_0 * \verb"challenge"^{n-1} \ .
+```
 
 In the Keccak Circuit, it corresponds to the column $\verb"data_rlc"$.
 
 
 #### output_rlc (hash_rlc)
 We are given the Keccak hash output being the $256$-bit word
-$$A[3][0]|\!|A[2][0]|\!|A[1][0]|\!|A[0][0] \ .$$
+$$A[3][0] || A[2][0] || A[1][0] || A[0][0] \ .$$
 We divide each of above $4$ words into byte representation as $A[i][0]=\overline{A[i][0][7], ..., A[i][0][0]}$. This gives $32$ bytes $A[0][0][0..7]$, $A[1][0][0..7]$, $A[2][0][0..7]$, $A[3][0][0..7]$ for $i=0,1,2,3$. Then RLC using Keccak output $\verb"challenge"$ (= the challenge for evm word, i.e., after `FirstPhase`) to obtain $$\verb"ouput_rlc"=A[0][0][0]+A[0][0][1]*\verb"challenge"+...+A[3][0][7] * \verb"challenge"^{31} \ .$$
 which is the output of Keccak hash's RLC that we use in our zkevm-circuits' Keccak table. In the Keccak Circuit, it corresponds to the column $\verb"hash_rlc"$.
 
