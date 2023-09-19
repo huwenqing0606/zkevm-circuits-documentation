@@ -48,7 +48,7 @@ stateDiagram
 
 A `Step` consists of the `StepState` and `CellManager`. We characterize each execution by its `StepState` consisting of the following components:
 
-```markmap
+```
 # Step
 ## StepState
 ### execution_state
