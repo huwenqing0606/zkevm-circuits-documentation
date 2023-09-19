@@ -6,6 +6,8 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/bytecode_circuit.rs `develop` branch
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/HkVuEMTOn
+
 ## The Bytecode table
 
 The EVM Circuit needs to lookup to the bytecode table that stores the correct bytecode information. This ensures that the bytes stored in the contract are the same as the bytes loaded in the table. The bytecode table has the following table layout:
