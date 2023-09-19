@@ -321,19 +321,19 @@ It also assigns $\verb#n_sum#=n_0+...+n_{31}$.
 
 Then the constraints are
 
-- $a_{reduced} 
+- $a_\text{reduced} 
 == a\mod n \ \text{ if } n\neq 0
-\text{ and } a_{\text{reduced}} == 0 \text{ if } n=0$ (ModGadget); 
-- $a_{\text{reduced}}\cdot b + 0  
+\text{ and } a_\text{reduced} == 0 \text{ if } n=0$ (ModGadget); 
+- $a_\text{reduced}\cdot b + 0  
 == d\cdot 2^{256} + e$ (MulAddWords512Gadget);
 - $k\cdot n + r == d\cdot 2^{256} + e$ (MulAddWords512Gadget);
-- $1-\mathbf{1}_{\{r<n\}}-\mathbf{1}_{\{\verb#n_sum#=0\}}==0$ (IsZeroGadget, LtWordGadget);
+- $1-1_{\{r<n\}}-1_{\{\verb#n_sum#=0\}}==0$ (IsZeroGadget, LtWordGadget);
 - `SameContextGadget`
     - opcodeID checks: opId $==$ OpcodeId(0x09);
     - state transition: rw_counter +4; stack\_pointer +2; pc +1; gas - op_cost;
-    - Lookups: $4$ busmapping lookups: $a=\boldsymbol{\mu}_{\textbf{s}}[0]$, 
-$b=\boldsymbol{\mu}_{\textbf{s}}[1]$, $n=\boldsymbol{\mu}_{\textbf{s}}[2]$, 
-$r=\boldsymbol{\mu}_{\textbf{s}}'[0]$;
+    - Lookups: $4$ busmapping lookups: $a=\mu_{s}[0]$, 
+$b=\mu_{s}[1]$, $n=\mu_{s}[2]$, 
+$r=\mu_{s}'[0]$;
     - Exceptions: 
         - 1. stack undeflow: $1022 \leq$ stack\_pointer $\leq 1024$; 
         - 2. out of gas: Remaining gas is not enough.
