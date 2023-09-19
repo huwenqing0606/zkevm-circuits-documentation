@@ -152,13 +152,16 @@ $$A[i][j] \leftarrow A[i][j]\oplus \verb"chunk[idx * 64..(idx + 1) * 64]"$$ to o
 #### Squeeze
 
 At the end of the above absorb process, take $A[0][0], A[1][0], A[2][0], A[3][0]$ to form $4$ words, each word is $64$-bit. The Keccak hash output would then be the $256$-bit word
-$$A[3][0]|\!|A[2][0]|\!|A[1][0]|\!|A[0][0]$$
+$$A[3][0]||A[2][0]||A[1][0]||A[0][0]$$
 
 
 ### Keccak Hash function Input and Output RLCs
 
 #### input_rlc (data_rlc)
-We are given the Keccak original input in bytes but without the padding bytes in the following order $$\verb"bytes"_0, ..., \verb"bytes"_{n-1}$$
+We are given the Keccak original input in bytes but without the padding bytes in the following order 
+```math
+\verb"bytes"_0, ..., \verb"bytes"_{n-1}
+```
 Then RLC using Keccak input $\verb"challenge"$ (which is after `FirstPhase`) to obtain
 
 $$\verb"input_rlc"=\verb"bytes"_{n-1}+\verb"bytes"_{n-2}*\verb"challenge"+...+\verb"bytes"_0 * \verb"challenge"^{n-1} \ .$$
