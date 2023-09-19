@@ -297,7 +297,8 @@ Of course, a full characterization of the EVM behavior under MULMOD also involve
 
 For the MULMOD opcode, EVM Circuit assigns $(a, b, n, r, k, a_{\text{reduced}}, d, e)$, each of which is 32-byte word:
 
-$$\begin{array}{rl}
+```math
+\begin{array}{rl}
 a & =\overline{a_0a_1...a_{31}}=\sum\limits_{i=0}^{31} a_i \cdot 256^i \ ,
 \\
 b & =\overline{b_0b_1...b_{31}}=\sum\limits_{i=0}^{31} b_i\cdot 256^i \ , 
@@ -313,13 +314,14 @@ d & =\overline{p_0p_1...p_{31}}=\sum\limits_{i=0}^{31} p_i\cdot 256^i \ ,
 e & =\overline{p_{32}p_{33}...p_{63}}=\sum\limits_{i=0}^{31} p_{32+i} \cdot 256^i \ ,
 \\
 k & =\overline{k_0k_1...k_{31}}=\sum\limits_{i=0}^{31} k_i \cdot 256^i \ .
-\end{array}$$
+\end{array}
+```
 
 It also assigns $\verb#n_sum#=n_0+...+n_{31}$.
 
 Then the constraints are
 
-- $a_{\text{reduced}} 
+- $a_{reduced} 
 == a\mod n \ \text{ if } n\neq 0
 \text{ and } a_{\text{reduced}} == 0 \text{ if } n=0$ (ModGadget); 
 - $a_{\text{reduced}}\cdot b + 0  
