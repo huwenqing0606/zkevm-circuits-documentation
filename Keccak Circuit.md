@@ -1,3 +1,5 @@
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/H1vMF0_u2
+
 ---
 tags: scroll documentation
 ---
@@ -5,8 +7,6 @@ tags: scroll documentation
 # Keccak Circuit
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/keccak_circuit.rs `develop` branch
-
-link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/H1vMF0_u2
 
 [NIST Keccak Spec]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
 
@@ -193,14 +193,15 @@ The multi-packed implementation for the Keccak Circuit uses special arithmetic c
 
 Each bit in the sparse-word-representation holds `BIT_COUNT` (=3) number of 0/1 bits, so equivalent to `BIT_SIZE` (=8) as the base of bit in the sparse-word-representation.
 
-A 64-bit word in sparse-word-representation can thus be expressed as a single field element since 64$\times$ 3=192<254.
+A 64-bit word in sparse-word-representation can thus be expressed as a single field element since 64 x 3=192<254.
 
 A `pack_table` indicates the relation between the standard bit-representation and the Keccak-sparse-word-representation, e.g. map 3=$\overline{1100}$ (little-endian-form) to 9. This is done by `pack`. The reverse operation is `unpack`. So 
-$$\begin{array}{rl}
+```math
+\begin{array}{rl}
 \verb"pack": & \overline{a_0a_1...a_{63}} \text{ (little endian)} \rightarrow a_0+a_1\cdot 8 +...+a_{63}\cdot 8^{63} \ ,
 \\
 \verb"unpack": & a_0+a_1\cdot 8+...+a_{63}\cdot 8^{63} \rightarrow \overline{a_0a_1...a_{63}} \text{ (little endian)} \ .
-\end{array}$$
+```
 These operations have to go back-and-forth between input (to Keccak internal) and output (from Keccak internal).
 
 It must be noticed that the packing related functions/modules `pack`, `unpack`, `into_bits`, `to_bytes` etc used inside Keccak Circuit are all in terms of little-endian order (in bits).
