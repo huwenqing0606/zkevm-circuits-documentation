@@ -16,7 +16,7 @@ code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/
 
 The [Ethereum Virtual Machine] (EVM) is a state machine that defines the rules of valid state transition in the Ethereum protocol. This means that it specifies a deterministic function under which the next valid EVM state is computed from the current EVM state. The execution part of EVM uses [opcodes] to realize these state transitions, which results in an <i>Exection trace</i>.
 
-![EVMExecutionTrace-Circuit](https://hackmd.io/_uploads/SJyjmfR_3.png =60%x)
+![EVMExecutionTrace-Circuit](https://hackmd.io/_uploads/SJyjmfR_3.png)
 
 The execution trace consists of each step of execution defined by the opcode. EVM Circuit aims at constructing a constraint system corresponding to this execution trace, that can be proved by some backend zk-proof system such as Halo2. 
 
