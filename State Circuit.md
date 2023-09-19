@@ -6,6 +6,8 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/state_circuit.rs `develop` branch.
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/B1ePCba_2
+
 ### EVM's read-write operations and the `rw_table`
 
 During execution, all of the EVM's read-write operations are recorded in `rw_table`, with an order sorted by a counter variable `rw_counter`. Each row of `rw_table`, a.k.a. `RwRow`, contains the following items as table columns:
