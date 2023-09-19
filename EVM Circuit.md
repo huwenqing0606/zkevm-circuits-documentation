@@ -2,7 +2,7 @@
 tags: scroll documentation
 ---
 
-link to original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/BJF7RZad2
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/BJF7RZad2
 
 # EVM Circuit
 
