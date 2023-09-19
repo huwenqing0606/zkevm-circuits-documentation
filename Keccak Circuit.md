@@ -449,11 +449,13 @@ RLC uses keccak input $\verb"challenge"$ (same as evm_words challenge).
 Update `data_rlcs` on each of the $17$ rounds where we absorb data based on input bytes. At each round, produce a sequence of 
 $$\verb"data_rlcs[0..NUM_BYTES_PER_WORD]",$$
 with RLC iteration at each step
-$$\begin{array}{l} 
+```math
+\begin{array}{l} 
 \verb"data_rlcs[NUM_BYTES_PER_WORD - (idx + 1)] " 
 \\
 \verb" = data_rlcs[NUM_BYTES_PER_WORD - idx] * challenge + byte_value"
-\end{array}$$
+\end{array}
+```
 and
 $$\verb"data_rlcs[NUM_BYTES_PER_WORD]"=\verb"data_rlcs[0]"$$ which is previous round RLC result, initialized from $0$. This means after each round $\verb"data_rlcs[0]"$ contains the final RLC of input bytes up to this round. This is set to be the `data_rlc` of the current round, and it is passed to the next round so that after all 17 absorb rounds, we get the final `data_rlc` for the current chunk data. This is then passed to the next chunk until the last byte of input data, where `data_rlc` must exclude padding data. So in the final part of the input byte `data_rlc` will be equal to the corresponding `input_rlc` in the Keccak table.  
 
