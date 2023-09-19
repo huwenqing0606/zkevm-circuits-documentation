@@ -395,7 +395,7 @@ Do $s[i][j]\oplus (\text{NOT } s[i+1 \mod 5][j] \text{ AND } s[i+2 \mod 5][j])$ 
 
 So we lookup to table generated from mapping $[0,1,2,3,4]\mapsto [0,1,1,0,0]$. 
 
-- <i>Completeness</i>: From the above table we see that any array of $0$-$1$ bits $(a,b,c,d)$ that satisfy $a\oplus (\text{NOT } b \text{ AND } c)=d$ must satisfy the $3a+2b-c$ lookup table constraint. 
+- <i>Completeness</i>: From the above table we see that any array of 0/1 bits $(a,b,c,d)$ that satisfy $a\oplus (\text{NOT } b \text{ AND } c)=d$ must satisfy the $3a+2b-c$ lookup table constraint. 
 
 ### iota-step
 
