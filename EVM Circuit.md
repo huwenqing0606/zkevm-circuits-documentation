@@ -350,7 +350,7 @@ According to the [ETH Yellow Paper], the RETURNDATACOPY opcode pops 3 stack elem
 \end{array}
 \right.
 ```
-Note that the data to be copied to memory that exceeds return data size ($\|\boldsymbol{\mu}_{\textbf{o}}\|$) will be padded by 0.
+Note that the data to be copied to memory that exceeds return data size ($\|\mu_{o}\|$) will be padded by 0.
 
 For RETURNDATACOPY opcode, EVM Circuit does the following type of constraint checks together with witness assignments:
 
