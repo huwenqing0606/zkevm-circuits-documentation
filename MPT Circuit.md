@@ -6,6 +6,8 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/mpt-circuit `v0.4` branch.
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/rJmoKkcO3
+
 [zkTrie spec]: https://github.com/scroll-tech/zktrie/blob/main/docs/zktrie.md
 
 [zkevm-circuits]: https://github.com/scroll-tech/zkevm-circuits
