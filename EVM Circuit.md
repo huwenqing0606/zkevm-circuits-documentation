@@ -48,7 +48,6 @@ stateDiagram
 
 A `Step` consists of the `StepState` and `CellManager`. We characterize each execution by its `StepState` consisting of the following components:
 
-```
 # Step
 ## StepState
 ### execution_state
@@ -79,7 +78,6 @@ A `Step` consists of the `StepState` and `CellManager`. We characterize each exe
  - reversible_write_counter
  - log_id
 ## CellManager
-```
 
 ### ConstraintBuilder
 
