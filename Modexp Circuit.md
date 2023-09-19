@@ -6,6 +6,8 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/misc-precompiled-circuit
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/SyHlJiRin
+
 Let $p$ be the prime used in Modexp. When $x$ is U256, $\langle x \rangle$ stands for its limb representation; and $\langle x \rangle_p$ stands for $x\mod p$.
 
 
@@ -21,12 +23,14 @@ and $\langle a^b\rangle_p=R_{n-1}$.
 
 Note that in binary representation $b_{k-1}=0 \text { or } 1$ depending on the exact bit. Also, $\langle u \cdot v \rangle_p=\langle \langle u \rangle_p \cdot \langle v \rangle_p \rangle_p$, so the recursion for $R$ can be further written as
 
-$$(1) \qquad R_0=1, R_k=\left\{
+```math
+(1) \qquad R_0=1, R_k=\left\{
 \begin{array}{ll}
 \langle \langle R_{k-1}\cdot R_{k-1}\rangle_p\cdot a\rangle_p & \text{ if } b_{k-1}=1;
 \\
 \langle R_{k-1}\cdot R_{k-1}\rangle_p &  \text{ if } b_{k-1}=0 \ ,
-\end{array}\right.$$
+\end{array}\right.
+```
 and $\langle a^b\rangle_p=R_{n-1}$.
 
 Note that the number of iterations $n$ is the number of bits of the exponent $b$. If $b$ is U256, then $n$ will not exceed 256.
@@ -59,37 +63,44 @@ For any $n$ the relation $xy=kp+d \mod n$ is equivalent to
 $$\langle x\rangle_n \langle y\rangle_n\equiv \langle k\rangle_n\langle p\rangle_n+\langle d \rangle_n \mod n \ .$$
 
 For an $x$ expressed in limbs, we get
-$$\begin{array}{l}
+```math
+\begin{array}{l}
 & \langle x \rangle_{n_1}
 \\
 = & x_0 + x_1 \cdot \langle 2^{108} \rangle_{n_1} +  x_2 \cdot \langle 2^{216} \rangle_{n_1} \mod (2^{108}-1)
 \\
 = & \langle x_0+x_1+x_2\rangle_{n_1}
-\end{array}$$
+\end{array}
+```
 since $\langle 2^{108} \rangle_{n_1}=\langle 2^{216} \rangle_{n_1}=1$. 
 
 Also, 
-$$\begin{array}{l}
+```math
+\begin{array}{l}
 & \langle x \rangle_{n_2}
 \\
 = & x_0  + x_1 \cdot  2^{108}  +  x_2 \cdot 2^{216} \mod 2^{216}
 \\
 = & \langle x_0 + x_1 \cdot 2^{108} \rangle_{n_2} \ .
-\end{array}$$
+\end{array}
+```
 
 And by definition $\langle x\rangle_{n_3}=x_3$. Notice that if both $x, y$ are decomposed into limbs, then 
-$$\begin{array}{l}
+```math
+\begin{array}{l}
 & \langle x y \rangle_{n_2}
 \\
 = & (x_0 + x_1 \cdot 2^{108})(y_0 + y_1 \cdot 2^{108}) \mod n_2
 \\
 = & \langle x_0y_0 + (x_1y_0+x_0y_1)\cdot 2^{108}\rangle_{n_2} \ ,
-\end{array}$$
+\end{array}
+```
 because $n_2=2^{216}$.
 
 So constraints that ensure $xy=kp+d$ is given by
 
-$$(2) \left\{\begin{array}{rcll}
+```math
+(2) \left\{\begin{array}{rcll}
 (x_0+x_1+x_2)(y_0+y_1+y_2) & \equiv & (k_0+k_1+k_2)(p_0+p_1+p_2) + (d_0+d_1+d_2)  & \mod (2^{108}-1) \ ,
 \\
 x_0y_0 + (x_1y_0+x_0y_1)\cdot 2^{108} & \equiv & k_0p_0 + (k_1p_0+k_0p_1)\cdot 2^{108} + d_0+d_1\cdot 2^{108} & \mod 2^{216} \ ,
@@ -97,7 +108,8 @@ x_0y_0 + (x_1y_0+x_0y_1)\cdot 2^{108} & \equiv & k_0p_0 + (k_1p_0+k_0p_1)\cdot 2
 x_3y_3 & \equiv & k_3p_3 + d_3 & \mod r \ ,
 \\
 d & < & p \ . &
-\end{array}\right.$$
+\end{array}\right.
+```
 
 
 ## Circuit Design and Layout
