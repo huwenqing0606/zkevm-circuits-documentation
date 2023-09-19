@@ -6,6 +6,7 @@ tags: scroll documentation
 
 code: https://github.com/scroll-tech/zkevm-circuits/blob/develop/zkevm-circuits/src/pi_circuit.rs `develop` branch
 
+link to the original HackMD file: https://hackmd.io/@dieGzUCgSGmRZFQ7SDxXCA/H1yLFYr9h
 
 ## Public Data
 
