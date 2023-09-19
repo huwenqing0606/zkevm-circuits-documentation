@@ -66,8 +66,7 @@ Note that k may well overflow U256. For example, let p=2 and x,y are close to $2
 is also a $\mod p$ value. Since 
 $xy \mod p = (x\mod p)\cdot y \mod p$, 
 so in practice when applying to the iteration (1), we always have $x$ replaced by $x\mod p$. This ensures 
-$xy< py$ 
-so that 
+xy < py so that 
 ```math
 k<(kp+d)/p=xy/p<y<2^{256}
 ``` 
