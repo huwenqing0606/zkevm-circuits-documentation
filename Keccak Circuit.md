@@ -201,6 +201,7 @@ A `pack_table` indicates the relation between the standard bit-representation an
 \verb"pack": & \overline{a_0a_1...a_{63}} \text{ (little endian)} \rightarrow a_0+a_1\cdot 8 +...+a_{63}\cdot 8^{63} \ ,
 \\
 \verb"unpack": & a_0+a_1\cdot 8+...+a_{63}\cdot 8^{63} \rightarrow \overline{a_0a_1...a_{63}} \text{ (little endian)} \ .
+\end{array}
 ```
 These operations have to go back-and-forth between input (to Keccak internal) and output (from Keccak internal).
 
