@@ -195,7 +195,7 @@ Each bit in the sparse-word-representation holds `BIT_COUNT` (=3) number of 0/1 
 
 A 64-bit word in sparse-word-representation can thus be expressed as a single field element since 64 x 3=192<254.
 
-A `pack_table` indicates the relation between the standard bit-representation and the Keccak-sparse-word-representation, e.g. map 3=$\overline{1100}$ (little-endian-form) to 9. This is done by `pack`. The reverse operation is `unpack`. So 
+A `pack_table` indicates the relation between the standard bit-representation and the Keccak-sparse-word-representation, e.g. map 3 = $\overline{1100}$ (little-endian-form) to 9. This is done by `pack`. The reverse operation is `unpack`. So 
 ```math
 \begin{array}{rl}
 \verb"pack": & \overline{a_0a_1...a_{63}} \text{ (little endian)} \rightarrow a_0+a_1\cdot 8 +...+a_{63}\cdot 8^{63} \ ,
