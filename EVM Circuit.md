@@ -280,7 +280,7 @@ This gadget is applied to every execution step in order to check the correct tra
 
 #### `mulmod`
 
-According to the [ETH Yellow Paper], the MULMOD opcode (modulo addition operation) pops $3$ EVM words $\boldsymbol{\mu}_{\textbf{s}}[0]$, $\boldsymbol{\mu}_{\textbf{s}}[1]$, $\boldsymbol{\mu}_{\textbf{s}}[2]$ each with 256-bit (32 byte) size from the stack and push back one EVM word $\boldsymbol{\mu}_{\textbf{s}}'[0]$. 
+According to the [ETH Yellow Paper], the MULMOD opcode (modulo addition operation) pops $3$ EVM words $\boldsymbol{\mu}_{s}[0]$, $\boldsymbol{\mu}_{s}[1]$, $\boldsymbol{\mu}_{s}[2]$ each with 256-bit (32 byte) size from the stack and push back one EVM word $\boldsymbol{\mu}_{s}'[0]$. 
 
 To make our notations simpler, we denote $a=\boldsymbol{\mu}_{\textbf{s}}[0]$, $b=\boldsymbol{\mu}_{\textbf{s}}[1]$ and $n=\boldsymbol{\mu}_{\textbf{s}}[2]$ and $r=\boldsymbol{\mu}_{\textbf{s}}'[0]$, then the EVM behavior of MULMOD opcode can be viewed as a mapping 
 $$(a, b, n)\stackrel{\text{MULMOD}}{\rightarrow}  
